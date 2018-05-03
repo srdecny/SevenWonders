@@ -1,11 +1,11 @@
 #pragma once
 #include "GameUtilities.h"
-#include "Player.h"
 #include <string>
 #include <vector>
 #include <memory>
 
 class Player;
+
 
 class BaseCard : public std::enable_shared_from_this<BaseCard>
 {
@@ -21,6 +21,8 @@ public:
 	std::string CardName;
 	std::vector<int> PlayerCount;
 	CardTypes type;
+	int ID;
+	std::vector<int> PrerequisiteCards;
 
 	bool CanPlayerAffordThis(Player& player);
 };

@@ -5,6 +5,7 @@
 Player::Player()
 {
 	AvaliableResources.push_back(ResourceVector());
+	Wonder = nullptr;
 	Gold = 3;
 }
 

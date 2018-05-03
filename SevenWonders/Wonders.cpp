@@ -1,4 +1,5 @@
 #include "Wonders.hpp"
+#include "Player.h"
 
 BaseWonder::BaseWonder()
 {

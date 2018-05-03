@@ -1,11 +1,13 @@
 #pragma once
 #include "stdafx.h"
 #include <stdio.h>
-#include "Player.h"
-#include "GameUtilities.h"
 #include <vector>
+#include "GameUtilities.h"
+#include "Cards.h"
+
 
 class Player;
+
 
 class BaseWonder
 {
@@ -21,7 +23,6 @@ class PyramidesOfGizaA : public BaseWonder
 {
     void InitialResource(Player& player);
     PyramidesOfGizaA();
-    ~PyramidesOfGizaA();
 };
 
 class Pyramides1A : public BaseCard

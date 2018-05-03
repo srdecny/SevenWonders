@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
-#include "Cards.h"
 #include <memory>
+#include "GameUtilities.h"
+
 class BaseCard;
+class BaseWonder;
 
 class Player
 {
@@ -21,7 +23,9 @@ public:
 	int CommonResourceCostLeft = 2;
 	int CommonResourceCostRight = 2;
 	int RareResourceCost = 2;
-    
+
+	BaseWonder* Wonder;
+
 	Player* LeftNeighbour;
 	Player* RightNeighbour;
 

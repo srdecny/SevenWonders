@@ -1,4 +1,5 @@
 #include "Cards.h"
+#include "Player.h"
 #include <iostream>
 
 
@@ -14,13 +15,20 @@ BaseCard::~BaseCard()
 
 bool BaseCard::CanPlayerAffordThis(Player& player)
 {
-	bool CanAfford = false;
 	for (ResourceVector &vector : player.AvaliableResources)
 	{
-		if (vector >= CardCost) CanAfford = true;
+		if (vector >= CardCost) return true;
 	}
 
-	return CanAfford;
+	for (auto &PlayedCard : player.PlayedCards)
+	{
+		for (auto prerequisite : PrerequisiteCards)
+		{
+			if (PlayedCard->ID == prerequisite) return true;
+		}
+	}
+
+	return false;
 }
 
 bool CardThatCostGold::CanPlayerAffordThis(Player& player)

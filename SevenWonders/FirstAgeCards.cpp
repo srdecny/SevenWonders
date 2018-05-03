@@ -16,6 +16,7 @@ WoodenWall::WoodenWall()
 	CardCost.ModifyResource(Wood, 1);
 	PlayerCount = { 3, 7 };
 	type = Military;
+	ID = 10;
 	
 }
 
@@ -30,6 +31,7 @@ LumberMill::LumberMill()
 	CardName = "Lumber Mill";
 	PlayerCount = { 3, 4 };
 	type = CommonResource;
+	ID = 11;
 }
 
 ClayMine::ClayMine()
@@ -38,6 +40,7 @@ ClayMine::ClayMine()
 	PlayerCount = { 3 };
 	GoldCost = 1;
 	type = CommonResource;
+	ID = 12;
 }
 
 void ClayMine::CardEffect(Player & player)
@@ -58,6 +61,7 @@ Statue::Statue()
     CardName = "Statue";
     CardCost.ModifyResource(Stone, 1);
     type = Government;
+	ID = 13;
     
 }
 
