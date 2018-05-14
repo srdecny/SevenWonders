@@ -20,31 +20,58 @@ public:
     std::vector<BaseCard> WonderBuildings;
 };
 
-class PyramidesOfGizaA : public BaseWonder
+class Gizah : public BaseWonder
 {
 public:
     void InitialResource(Player& player);
-    PyramidesOfGizaA();
+    Gizah();
 };
 
-class Pyramides1A : public BaseCard
+class Pyramides1 : public BaseCard
 {
 public:
-    Pyramides1A();
+    Pyramides1();
     int ScorePoints(Player& player);
 };
 
-class Pyramides2A : public BaseCard
+class Pyramides2 : public BaseCard
 {
 public:
-    Pyramides2A();
+    Pyramides2();
     int ScorePoints(Player& player);
 };
 
-class Pyramides3A : public BaseCard
+class Pyramides3 : public BaseCard
 {
 public:
-    Pyramides3A();
+    Pyramides3();
     int ScorePoints(Player& player);
 };
 
+class Rhodos : public BaseWonder
+{
+public:
+	void InitialResource(Player& player);
+	Rhodos();
+};
+
+class Rhodos1 : public BaseCard
+{
+public:
+	Rhodos1();
+	int ScorePoints(Player& player);
+};
+
+class Rhodos2 : public BaseCard
+{
+public:
+	Rhodos2();
+	void CardEffect(Player& player);
+};
+
+class Rhodos3 : public BaseCard
+{
+public:
+	Rhodos3();
+	int ScorePoints(Player& player);
+};

@@ -57,7 +57,7 @@ void ClayDeposit::CardEffect(Player& player)
 	player.ModifyTradableResources(Clay, 1);
 }
 
-
+// DUAL RESOURCES
 ClayMine::ClayMine()
 {
 	CardName = "Clay Mine";

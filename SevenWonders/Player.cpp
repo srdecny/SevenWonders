@@ -5,8 +5,8 @@
 
 Player::Player()
 {
-	
-	Wonder = new PyramidesOfGizaA();
+	Wonder = new Gizah();
+	TradableResources.push_back(ResourceVector());
 	Gold = 3;
 }
 

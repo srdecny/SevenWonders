@@ -14,8 +14,6 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 {
 	if (PlayerCount <= 2 || PlayerCount > 7) throw std::invalid_argument("Invalid player count!");
 
-	
-
 	for (int i = 0; i < PlayerCount; i++)
 	{
 		Players.push_back(Player());
@@ -48,10 +46,10 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	stream << "Cards you can play this turn: " << std::endl;
 	for (auto& card : cards)
 	{
-        int cost = DetermineLowestBuyingCost(player, card); // if 0 then can't buy it from neighbours
+        auto cost = DetermineLowestBuyingCost(player, card); // if 0 then can't buy it from neighbours
         
         if (card->CanPlayerAffordThis(player)) stream << "You can afford this for free: " << card->CardName << std::endl;
-        else if (cost != 0 || cost > player.Gold) stream << "You can afford this for a minimum cost of: " << DetermineLowestBuyingCost(player, card) << ", " << card->CardName << std::endl;
+        else if (cost[0] != 0 || cost[0] > player.Gold) stream << "You can afford this for a minimum cost of: " << cost[0] << ", " << card->CardName << std::endl;
         else  stream << "You can't afford this card: " << card->CardName << std::endl;
 	}
 }
@@ -61,12 +59,14 @@ bool GameEngine::PlayerCanAffordCard(Player &player, std::shared_ptr<BaseCard> c
 	throw std::invalid_argument("NOT IMPLEMENTED");
 }
 
-int GameEngine::DetermineLowestBuyingCost(Player &player, std::shared_ptr<BaseCard> card)
+std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shared_ptr<BaseCard> card)
 {
 	// most of the time players will have only one or two resource vectors, so performance should be OK
 	// the rough cap of different resource vectors in base game is 16 (caravanserai + appropriate wonder)
 
 	int MinimumCost = 1000; // the real cost won't ever be bigger, so it's safe
+	int GoldPaidToLeft = 0;
+	int GoldPaidToRight = 0;
 
 	for (ResourceVector &PlayerResource : player.TradableResources)
 	{
@@ -78,68 +78,57 @@ int GameEngine::DetermineLowestBuyingCost(Player &player, std::shared_ptr<BaseCa
 			for (ResourceVector &RightNeighbourResource : player.RightNeighbour->TradableResources)
 			{
 				int CostOfThisPair = 0; // how much will this pair cost us
+				int PaidToLeftThisPair = 0;
+				int PaidToRightThisPair = 0;
 
 				for (int i = 0; i <= 6; i++) // check individual resources
 				{
-					if (LeftNeighbourResource.ResourcesArray[0] + RightNeighbourResource.ResourcesArray[0] < ResourcesToBuy.ResourcesArray[0])
+					int AmountToBuy = ResourcesToBuy[i];
+
+					if (LeftNeighbourResource[i] + RightNeighbourResource[i] < AmountToBuy)
 					{
 						break; // this pair of neighbour resources doesn't have enough resources we need, so just discard it
 					}
 
-					if (i <= 4) // common resources, we might have some discounts for either side
+					if (i <= 3) // common resources, we might have some discounts for either side
 					{
-						// we don't have any discounts or we have both of them
-						if (player.CommonResourceCostLeft == player.CommonResourceCostRight)
+						if (player.CommonResourceCostLeft == 1) // discount for left
 						{
-							CostOfThisPair += player.CommonResourceCostLeft*ResourcesToBuy.ResourcesArray[i];
+							int CanBuyFromLeft = std::min(AmountToBuy, LeftNeighbourResource[i]);
+							PaidToLeftThisPair += player.CommonResourceCostLeft * CanBuyFromLeft;
+							PaidToRightThisPair += player.CommonResourceCostRight * (AmountToBuy - CanBuyFromLeft);
 						}
-						else // we have discount when buying from one neighbour
+						else // discount for right
 						{
-							if (player.CommonResourceCostLeft == 1) // discount for left neighbour
-							{
-								int HowMuchWeCanBuyFromLeft;
-								if (ResourcesToBuy.ResourcesArray[i] <= LeftNeighbourResource.ResourcesArray[i]) // can buy everything from left
-								{
-									HowMuchWeCanBuyFromLeft = ResourcesToBuy.ResourcesArray[i];
-								}
-								else // can buy just something
-								{
-									HowMuchWeCanBuyFromLeft = LeftNeighbourResource.ResourcesArray[i];
-								}
-
-								CostOfThisPair += HowMuchWeCanBuyFromLeft + 2 * (ResourcesToBuy.ResourcesArray[i] - HowMuchWeCanBuyFromLeft);
-							}
-							else // discount for right neighbour
-							{
-								int HowMuchWeCanBuyFromRight;
-								if (ResourcesToBuy.ResourcesArray[i] <= RightNeighbourResource.ResourcesArray[i]) // can buy everything from left
-								{
-									HowMuchWeCanBuyFromRight = ResourcesToBuy.ResourcesArray[i];
-								}
-								else
-								{
-									HowMuchWeCanBuyFromRight = RightNeighbourResource.ResourcesArray[i];
-								}
-
-								CostOfThisPair += HowMuchWeCanBuyFromRight + 2 * (ResourcesToBuy.ResourcesArray[i] - HowMuchWeCanBuyFromRight);
-
-							}
+							int CanBuyFromRight = std::min(AmountToBuy, RightNeighbourResource[i]);
+							PaidToRightThisPair += player.CommonResourceCostRight * CanBuyFromRight;
+							PaidToLeftThisPair += player.CommonResourceCostLeft * (AmountToBuy - CanBuyFromRight);
 						}
 					}
 					else // rare resources, discount is always for both neighbours
 					{
-						CostOfThisPair += player.RareResourceCost*ResourcesToBuy.ResourcesArray[i];
+						int CanBuyFromLeft = std::min(AmountToBuy, LeftNeighbourResource[i]);
+						PaidToLeftThisPair += player.RareResourceCost * CanBuyFromLeft;
+						PaidToRightThisPair += player.RareResourceCost * (AmountToBuy - CanBuyFromLeft);
 					}
 
-				}
 
-				if (CostOfThisPair < MinimumCost ) MinimumCost = CostOfThisPair;
+
+					int TotalCost = PaidToLeftThisPair + PaidToRightThisPair;
+
+					if (MinimumCost > TotalCost && TotalCost > 0)
+					{
+						MinimumCost = TotalCost;
+						GoldPaidToLeft = PaidToLeftThisPair;
+						GoldPaidToRight = PaidToRightThisPair;
+					}
+				}
 
 			}
 		}
 	
 	}
-	return MinimumCost;
+	return std::vector<int>{ MinimumCost, GoldPaidToLeft, GoldPaidToRight};
 }
 
 int GameEngine::ScorePlayerPoints(Player &player)
@@ -176,11 +165,11 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 	switch (WonderIndex)
 	{
 	case 1:
-		return new PyramidesOfGizaA();
+		return new Gizah();
 		break;
 
 	default:
-		return new PyramidesOfGizaA();
+		return new Gizah();
 		break;
 		//throw std::exception("Wonder not implemented!");
 	}
