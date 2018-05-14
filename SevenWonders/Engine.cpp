@@ -1,6 +1,6 @@
 #include "Engine.h"
 #include "Cards.h"
-
+#include "Wonders.hpp"
 
 GameEngine::GameEngine()
 {
@@ -14,6 +14,8 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 {
 	if (PlayerCount <= 2 || PlayerCount > 7) throw std::invalid_argument("Invalid player count!");
 
+	
+
 	for (int i = 0; i < PlayerCount; i++)
 	{
 		Players.push_back(Player());
@@ -26,9 +28,19 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 		// because c++ doesnt have proper modulo we have to use this weird formula instead
 		Players[j].LeftNeighbour = &Players[((j - 1) % PlayerCount + PlayerCount) % PlayerCount];
 		Players[j].RightNeighbour = &Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount];
+	}
+
+	/*
+	// randomly assign wonders to players
+	std::vector<int> WondersToDistribute = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	std::random_shuffle(WondersToDistribute.begin(), WondersToDistribute.end());
+	for (int i = 7 - PlayerCount; i > 0; i--) WondersToDistribute.pop_back(); // discard excess wonders
+
+	for (int j = 0; j < PlayerCount; j++)
+	{
 
 	}
-    
+	*/
 }
 
 void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>> cards)
@@ -56,14 +68,14 @@ int GameEngine::DetermineLowestBuyingCost(Player &player, std::shared_ptr<BaseCa
 
 	int MinimumCost = 1000; // the real cost won't ever be bigger, so it's safe
 
-	for (ResourceVector &PlayerResource : player.AvaliableResources)
+	for (ResourceVector &PlayerResource : player.TradableResources)
 	{
 		ResourceVector ResourcesToBuy = card->CardCost - PlayerResource;
 
 		// we need to loop over all possible combinations of neighbour's resources
-		for (ResourceVector &LeftNeighbourResource : player.LeftNeighbour->AvaliableResources)
+		for (ResourceVector &LeftNeighbourResource : player.LeftNeighbour->TradableResources)
 		{
-			for (ResourceVector &RightNeighbourResource : player.RightNeighbour->AvaliableResources)
+			for (ResourceVector &RightNeighbourResource : player.RightNeighbour->TradableResources)
 			{
 				int CostOfThisPair = 0; // how much will this pair cost us
 
@@ -139,3 +151,38 @@ int GameEngine::ScorePlayerPoints(Player &player)
     }
     return ScoredPoints;
 }
+
+int GameEngine::ScoreSciencePoints(Player &player)
+{
+	int ScoredPoints = 0;
+
+	for (ScienceVector &vector : player.ScienceVectors)
+	{
+		int VectorScore = 0;
+		VectorScore += *std::min_element(vector.ScienceArray.begin(), vector.ScienceArray.end()) * 7;
+		for (int i = 0; i <= 2; i++)
+		{
+			VectorScore += vector.ScienceArray[i] * vector.ScienceArray[i];
+		}
+
+		if (VectorScore > ScoredPoints) ScoredPoints = VectorScore;
+	}
+
+	return ScoredPoints;
+}
+
+/*
+std::unique_ptr<BaseWonder> GameEngine::GenerateWonder(int WonderIndex)
+{
+	switch (WonderIndex)
+	{
+	case 1:
+		//return std::make_unique<PyramidesOfGizaA>();
+		break;
+
+	default:
+		throw std::exception("Wonder not implemented!");
+	}
+
+}
+*/

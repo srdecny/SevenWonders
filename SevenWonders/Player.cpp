@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	AvaliableResources.push_back(ResourceVector());
+	TradableResources.push_back(ResourceVector());
 	Wonder = nullptr;
 	Gold = 3;
 }
@@ -14,10 +14,18 @@ Player::~Player()
 {
 }
 
-void Player::ModifyAvaliableResource(Resources resource, int change)
+void Player::ModifyTradableResources(Resources resource, int change)
 {
-	for (ResourceVector &v : AvaliableResources)
+	for (ResourceVector &v : TradableResources)
 	{
 		v.ResourcesArray[resource] += change;
+	}
+}
+
+void Player::ModifyScienceVectors(ScienceSymbols symbol, int change)
+{
+	for (ScienceVector &v : ScienceVectors)
+	{
+		v.ScienceArray[symbol] += change;
 	}
 }

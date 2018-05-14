@@ -27,4 +27,6 @@ public:
 private:
 	// find the cheapest way a player can buy a card
 	int DetermineLowestBuyingCost(Player& player, std::shared_ptr<BaseCard> card);
+	//std::unique_ptr<BaseWonder> GenerateWonder(int WonderIndex);
+	int ScoreSciencePoints(Player& player);
 };

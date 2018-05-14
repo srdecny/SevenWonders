@@ -17,7 +17,7 @@ int main()
     auto mine = make_shared<ClayMine>();
     auto wall = make_shared<WoodenWall>();
     auto mill = make_shared<LumberMill>();
-    auto statue = make_shared<Statue>();
+    auto statue = make_shared<Shrine>();
     
 	mine->Play(engine.Players[1]);
     mill->Play(engine.Players[1]);

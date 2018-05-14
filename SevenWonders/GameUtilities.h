@@ -2,7 +2,8 @@
 #include <array>
 
 enum Resources { Wood, Clay, Iron, Stone, Glass, Cloth, Paper };
-enum CardTypes {CommonResource, RareResource, Military, Trade, Science, Government, Guild};
+enum CardTypes {CommonResource, RareResource, Military, Merchant, Science, Government, Guild};
+enum ScienceSymbols {Cog, Tableau, Compass};
 
 class ResourceVector
 {
@@ -22,7 +23,14 @@ public:
 
 	std::array<int, 7> ResourcesArray;
 
+};
 
+class ScienceVector
+{
+public:
+	ScienceVector();
+	void ModifyResource(ScienceSymbols resource, int change);
+	std::array<int, 3> ScienceArray;
 };
 
 

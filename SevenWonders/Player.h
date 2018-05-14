@@ -12,12 +12,14 @@ public:
 	Player();
 	~Player();
 
-	std::vector<ResourceVector> AvaliableResources; // todo TradableResources
+	std::vector<ResourceVector> TradableResources; // todo TradableResources
+	std::vector<ScienceVector> ScienceVectors;
     
     // shared_ptr because one card can appear multiple times in the game with higher player count
     // and we want to have only one instance of each card class for lower memory usage
     std::vector<std::shared_ptr<BaseCard>> PlayedCards;
-	void ModifyAvaliableResource(Resources resource, int change);
+	void ModifyTradableResources(Resources resource, int change);
+	void ModifyScienceVectors(ScienceSymbols symbol, int change);
 
 	int Gold;
 	int CommonResourceCostLeft = 2;

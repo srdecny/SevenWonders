@@ -16,6 +16,7 @@ public:
     ~BaseWonder();
     virtual void InitialResource(Player& player) = 0;
     int WonderLevel;
+	int CurrentLevel = 0;
     std::vector<BaseCard> WonderBuildings;
 };
 

@@ -12,7 +12,7 @@ BaseWonder::~BaseWonder()
 
 void PyramidesOfGizaA::InitialResource(Player &player)
 {
-    player.ModifyAvaliableResource(Stone, 1);
+    player.ModifyTradableResources(Stone, 1);
 }
 
 PyramidesOfGizaA::PyramidesOfGizaA()

@@ -37,3 +37,12 @@ int& ResourceVector::operator[](int index)
     return ResourcesArray[index];
 }
 
+ScienceVector::ScienceVector()
+{
+	ScienceArray = { 0,0,0 };
+}
+
+void ScienceVector::ModifyResource(ScienceSymbols symbol, int change)
+{
+	ScienceArray[symbol] += change;
+}

@@ -15,7 +15,7 @@ BaseCard::~BaseCard()
 
 bool BaseCard::CanPlayerAffordThis(Player& player)
 {
-	for (ResourceVector &vector : player.AvaliableResources)
+	for (ResourceVector &vector : player.TradableResources)
 	{
 		if (vector >= CardCost) return true;
 	}
