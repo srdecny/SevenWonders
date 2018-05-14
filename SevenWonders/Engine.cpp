@@ -30,17 +30,17 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 		Players[j].RightNeighbour = &Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount];
 	}
 
-	/*
+	
 	// randomly assign wonders to players
 	std::vector<int> WondersToDistribute = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	std::random_shuffle(WondersToDistribute.begin(), WondersToDistribute.end());
-	for (int i = 7 - PlayerCount; i > 0; i--) WondersToDistribute.pop_back(); // discard excess wonders
+	for (int k = 7 - PlayerCount; k > 0; k--) WondersToDistribute.pop_back(); // discard excess wonders
 
-	for (int j = 0; j < PlayerCount; j++)
+	for (int l = 0; l < PlayerCount; l++)
 	{
-
+		Players[l].Wonder = GenerateWonder(WondersToDistribute[l]);
 	}
-	*/
+	
 }
 
 void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>> cards)
@@ -171,18 +171,18 @@ int GameEngine::ScoreSciencePoints(Player &player)
 	return ScoredPoints;
 }
 
-/*
-std::unique_ptr<BaseWonder> GameEngine::GenerateWonder(int WonderIndex)
+BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 {
 	switch (WonderIndex)
 	{
 	case 1:
-		//return std::make_unique<PyramidesOfGizaA>();
+		return new PyramidesOfGizaA();
 		break;
 
 	default:
-		throw std::exception("Wonder not implemented!");
+		return new PyramidesOfGizaA();
+		break;
+		//throw std::exception("Wonder not implemented!");
 	}
 
 }
-*/

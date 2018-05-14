@@ -1,17 +1,19 @@
 #include "Player.h"
+#include "Wonders.hpp"
 #include <array>
 
 
 Player::Player()
 {
-	TradableResources.push_back(ResourceVector());
-	Wonder = nullptr;
+	
+	Wonder = new PyramidesOfGizaA();
 	Gold = 3;
 }
 
 
 Player::~Player()
 {
+	Wonder->~BaseWonder();
 }
 
 void Player::ModifyTradableResources(Resources resource, int change)

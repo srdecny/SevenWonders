@@ -48,8 +48,3 @@ void BaseCard::CardEffect(Player& player)
 
 }
 
-int CardsThatScorePoints::ScorePoints(Player &player)
-{
-    throw std::exception();
-};
-

@@ -22,6 +22,7 @@ public:
 
 class PyramidesOfGizaA : public BaseWonder
 {
+public:
     void InitialResource(Player& player);
     PyramidesOfGizaA();
 };

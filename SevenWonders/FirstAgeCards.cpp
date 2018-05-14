@@ -10,13 +10,53 @@ LumberMill::LumberMill()
 	CardName = "Lumber Mill";
 	PlayerCount = { 3, 4 };
 	type = CommonResource;
-	ID = 11;
+	ID = 1;
 }
 
 void LumberMill::CardEffect(Player& player)
 {
 	player.ModifyTradableResources(Wood, 1);
 }
+
+IronMine::IronMine()
+{
+	CardName = "Lumber Mill";
+	PlayerCount = { 3, 4 };
+	type = CommonResource;
+	ID = 2;
+}
+
+void IronMine::CardEffect(Player& player)
+{
+	player.ModifyTradableResources(Iron, 1);
+}
+
+StoneQuarry::StoneQuarry()
+{
+	CardName = "Stone Quarry";
+	PlayerCount = { 3, 5 };
+	type = CommonResource;
+	ID = 3;
+}
+
+void StoneQuarry::CardEffect(Player& player)
+{
+	player.ModifyTradableResources(Stone, 1);
+}
+
+ClayDeposit::ClayDeposit()
+{
+	CardName = "Clay Deposit";
+	PlayerCount = { 3, 5 };
+	type = CommonResource;
+	ID = 4;
+}
+
+void ClayDeposit::CardEffect(Player& player)
+{
+	player.ModifyTradableResources(Clay, 1);
+}
+
 
 ClayMine::ClayMine()
 {

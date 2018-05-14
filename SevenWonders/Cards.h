@@ -34,8 +34,3 @@ public:
 	bool CanPlayerAffordThis(Player& player); // checks if player has enough gold too
 };
 
-class CardsThatScorePoints : public BaseCard
-{
-    int ScorePoints(Player& player);
-};
-

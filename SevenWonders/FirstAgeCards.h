@@ -38,8 +38,26 @@ public:
 	LumberMill();
 };
 
+class IronMine : public BaseCard
+{
+public:
+	void CardEffect(Player & player);
+	IronMine();
+};
 
+class StoneQuarry : public BaseCard
+{
+public:
+	void CardEffect(Player & player);
+	StoneQuarry();
+};
 
+class ClayDeposit : public BaseCard
+{
+public:
+	void CardEffect(Player & player);
+	ClayDeposit();
+};
 
 // MERCHANTS
 class Marketplace : public BaseCard
