@@ -1,172 +1,144 @@
 
-#include "FirstAgeCards.h"
+#include "Cards.h"
 #include <vector>
 #include <iostream>
-
+#include "FirstAgeCards.h"
 
 // RESOURCES
-LumberMill::LumberMill()
+ClayDeposit::ClayDeposit() 
 {
-	CardName = "Lumber Mill";
-	PlayerCount = { 3, 4 };
-	type = CommonResource;
-	ID = 1;
-}
-
-void LumberMill::CardEffect(Player& player)
-{
-	player.ModifyTradableResources(Wood, 1);
+	Type = CommonResource;
+	ProducedResource = Clay;
+	Amount = 1;
 }
 
 IronMine::IronMine()
 {
-	CardName = "Lumber Mill";
-	PlayerCount = { 3, 4 };
-	type = CommonResource;
-	ID = 2;
+	Type = CommonResource;
+	ProducedResource = Iron;
+	Amount = 1;
 }
 
-void IronMine::CardEffect(Player& player)
+LumberMill::LumberMill()
 {
-	player.ModifyTradableResources(Iron, 1);
+	Type = CommonResource;
+	ProducedResource = Wood;
+	Amount = 1;
 }
 
 StoneQuarry::StoneQuarry()
 {
-	CardName = "Stone Quarry";
-	PlayerCount = { 3, 5 };
-	type = CommonResource;
-	ID = 3;
+	Type = CommonResource;
+	ProducedResource = Stone;
+	Amount = 1;
 }
 
-void StoneQuarry::CardEffect(Player& player)
+
+PapyrusManufacture::PapyrusManufacture()
 {
-	player.ModifyTradableResources(Stone, 1);
+	Type = RareResource;
+	ProducedResource = Paper;
+	Amount = 1;
 }
 
-ClayDeposit::ClayDeposit()
+Glassworks::Glassworks()
 {
-	CardName = "Clay Deposit";
-	PlayerCount = { 3, 5 };
-	type = CommonResource;
-	ID = 4;
+	Type = RareResource;
+	ProducedResource = Glass;
+	Amount = 1;
 }
 
-void ClayDeposit::CardEffect(Player& player)
+WeavingMill::WeavingMill()
 {
-	player.ModifyTradableResources(Clay, 1);
+	Type = RareResource;
+	ProducedResource = Cloth;
+	Amount = 1;
 }
 
-// DUAL RESOURCES
+
+Forestry::Forestry()
+{
+	GoldCost = 1;
+	ProducedResources = { Wood, Clay };
+}
+
+SurfaceMine::SurfaceMine()
+{
+	GoldCost = 1;
+	ProducedResources = { Stone, Clay };
+}
+
+DeepMine::DeepMine()
+{
+	GoldCost = 1;
+	ProducedResources = { Stone, Iron };
+}
+
+ForestCave::ForestCave()
+{
+	GoldCost = 1;
+	ProducedResources = { Wood, Iron };
+}
+
 ClayMine::ClayMine()
 {
-	CardName = "Clay Mine";
-	PlayerCount = { 3 };
 	GoldCost = 1;
-	type = CommonResource;
-	ID = 12;
+	ProducedResources = { Iron, Clay };
 }
 
-void ClayMine::CardEffect(Player & player)
+WoodedFoothills::WoodedFoothills()
 {
-	player.Gold -= 1;
-	// make all new permutations avaliable with the dual resources
-    // can use only one of the two resources at one time
-	std::vector<ResourceVector> originalResources = player.TradableResources;
-	for (ResourceVector &vector : originalResources) { vector.ModifyResource(Clay, 1); }
-	for (ResourceVector &vector : player.TradableResources) { vector.ModifyResource(Iron, 1); }
-	for (ResourceVector &vector : originalResources) { player.TradableResources.push_back(vector); }
+	GoldCost = 1;
+	ProducedResources = { Stone, Wood };
 }
 
 // MILITARY
-WatchTower::WatchTower()
+WoodenWall::WoodenWall()
 {
-	CardName = "Watch Tower";
-	CardCost.ModifyResource(Clay, 1);
-	type = Military;
-	PlayerCount = { 3, 4 };
-	ID = 11;
+	Power = 1;
+	CardCost.ModifyResource(Wood, 1);
 }
 
-void WatchTower::CardEffect(Player & player)
+WatchTower::WatchTower()
 {
-	player.MilitaryPoints++;
+	Power = 1;
+	CardCost.ModifyResource(Clay , 1);
 }
 
 Barracks::Barracks()
 {
-	CardName = "Barracks";
-	CardCost.ModifyResource(Wood, 1);
-	type = Military;
-	PlayerCount = { 3, 5 };
-	ID = 12;
+	Power = 1;
+	CardCost.ModifyResource(Iron, 1);
 }
 
-void Barracks::CardEffect(Player & player)
+
+// GOVERNMENT
+Shrine::Shrine()
 {
-	player.MilitaryPoints++;
+	Points = 2;
 }
 
-WoodenWall::WoodenWall()
+Spa::Spa()
 {
-	CardName = "Wooden Wall";
-	CardCost.ModifyResource(Wood, 1);
-	type = Military;
-	PlayerCount = { 3, 7 };
-	ID = 13;
+	CardCost.ModifyResource(Stone, 1);
+	Points = 3;
 }
 
-void WoodenWall::CardEffect(Player & player)
+PawnShop::PawnShop()
 {
-	player.MilitaryPoints += 1;
+	Points = 3;
 }
 
-// MERCHANTS
-Marketplace::Marketplace()
+Theatre::Theatre()
 {
-	CardName = "Marketplace";
-	type = Merchant;
-	PlayerCount = { 3, 6 };
-	ID = 14;
+	Points = 2;
 }
 
-void Marketplace::CardEffect(Player& player)
-{
-	player.RareResourceCost = 1;
-}
-
-EasternMarket::EasternMarket()
-{
-	CardName = "Eastern Market";
-	type = Merchant;
-	PlayerCount = { 3, 7 };
-	ID = 15;
-}
-
-void EasternMarket::CardEffect(Player& player)
-{
-	player.CommonResourceCostRight = 1;
-}
-
-WesternMarket::WesternMarket()
-{
-	CardName = "Western Market";
-	type = Merchant;
-	PlayerCount = { 3, 7 };
-	ID = 16;
-}
-
-void WesternMarket::CardEffect(Player& player)
-{
-	player.CommonResourceCostLeft = 1;
-}
+// MERCHANT
 
 Pub::Pub()
 {
-	CardName = "Pub";
-	type = Merchant;
-	PlayerCount = { 4, 5, 7 };
-	ID = 17;
+
 }
 
 void Pub::CardEffect(Player& player)
@@ -174,102 +146,52 @@ void Pub::CardEffect(Player& player)
 	player.Gold += 5;
 }
 
-// GOVERNMENT
-
-Shrine::Shrine()
+WesternMarket::WesternMarket()
 {
-	CardName = "Shrine";
-	type = Government;
-	PlayerCount = { 3, 5 };
-	ID = 18;
+
 }
 
-int Shrine::ScorePoints(Player &player)
+void WesternMarket::CardEffect(Player& player)
 {
-	return 2;
+	player.CommonResourceCostRight = 1;
 }
 
-PawnShop::PawnShop()
+EasternMarket::EasternMarket()
 {
-	CardName = "Pawn Shop";
-	type = Government;
-	PlayerCount = { 4, 7 };
-	ID = 19;
+
 }
 
-int PawnShop::ScorePoints(Player &player)
+void EasternMarket::CardEffect(Player& player)
 {
-	return 3;
+	player.CommonResourceCostLeft = 1;
 }
 
-Spa::Spa()
+Marketplace::Marketplace()
 {
-	CardName = "Spa";
-	CardCost.ModifyResource(Stone, 1);
-	type = Government;
-	PlayerCount = { 3, 7 };
-	ID = 20;
+
 }
 
-int Spa::ScorePoints(Player &player)
+void Marketplace::CardEffect(Player& player)
 {
-	return 3;
-}
-
-Theatre::Theatre()
-{
-	CardName = "Theatre";
-	CardCost.ModifyResource(Stone, 1);
-	type = Government;
-	PlayerCount = { 3, 6 };
-	ID = 21;
-}
-
-int Theatre::ScorePoints(Player &player)
-{
-	return 2;
+	player.RareResourceCost = 1;
 }
 
 // SCIENCE
 
-ScribeShop::ScribeShop()
+ScriberShop::ScriberShop()
 {
-	CardName = "Scribe Shop";
-	CardCost.ModifyResource(Glass, 1);
-	type = Science;
-	PlayerCount = { 3, 4 };
-	ID = 22;
-}
-
-void ScribeShop::CardEffect(Player &player)
-{
-	player.ModifyScienceVectors(Tableau, 1);
-}
-
-Workshop::Workshop()
-{
-	CardName = "Workshop";
-	CardCost.ModifyResource(Glass, 1);
-	type = Science;
-	PlayerCount = { 3, 5 };
-	ID = 23;
-}
-
-void Workshop::CardEffect(Player &player)
-{
-	player.ModifyScienceVectors(Cog, 1);
+	CardCost.ModifyResource(Paper, 1);
+	Symbol = Cog;
 }
 
 Aphotecary::Aphotecary()
 {
-	CardName = "Workshop";
 	CardCost.ModifyResource(Cloth, 1);
-	type = Science;
-	PlayerCount = { 3, 5 };
-	ID = 24;
+	Symbol = Compass;
 }
 
-void Aphotecary::CardEffect(Player &player)
+Workshop::Workshop()
 {
-	player.ModifyScienceVectors(Compass, 1);
+	CardCost.ModifyResource(Glass, 1);
+	Symbol = Tableau;
 }

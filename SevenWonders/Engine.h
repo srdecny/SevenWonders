@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Player.h"
 #include "stdafx.h"
+#include "FirstAgeCards.h"
 
 
 
@@ -21,6 +22,8 @@ public:
 
 
     void PresentCardsToPlayer(std::ostream& stream, Player& player, std::vector<std::shared_ptr<BaseCard>> cards);
+
+	void PrintPlayerStats(std::ostream& stream, Player& player);
 
     bool PlayerCanAffordCard(Player& player, std::shared_ptr<BaseCard> card);
 

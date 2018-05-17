@@ -2,134 +2,65 @@
 #include "Cards.h"
 #include "Player.h"
 
-// MILITARY
-class WoodenWall : public BaseCard 
-{
-public:
-	void CardEffect(Player& player);
-	WoodenWall();
-};
-
-class WatchTower : public BaseCard
-{
-	void CardEffect(Player& player);
-	WatchTower();
-};
-
-class Barracks : public BaseCard
-{
-	void CardEffect(Player& player);
-	Barracks();
-};
-
 // RESOURCES
+class ClayDeposit : public SingleResourceBuilding { public: ClayDeposit(); };
+class IronMine : public SingleResourceBuilding { public: IronMine(); };
+class LumberMill : public SingleResourceBuilding { public: LumberMill(); };
+class StoneQuarry : public SingleResourceBuilding { public: StoneQuarry(); };
 
-class ClayMine : public CardThatCostGold
-{
-public:
-	void CardEffect(Player& player);
-	ClayMine();
-};
+class PapyrusManufacture : public SingleResourceBuilding { public: PapyrusManufacture(); };
+class WeavingMill : public SingleResourceBuilding { public: WeavingMill(); };
+class Glassworks : public SingleResourceBuilding { public: Glassworks(); };
 
-class LumberMill : public BaseCard
-{
-public:
-	void CardEffect(Player & player);
-	LumberMill();
-};
+class Forestry : public MultipleResourceBuilding { public: Forestry(); };
+class SurfaceMine : public MultipleResourceBuilding { public: SurfaceMine(); };
+class DeepMine : public MultipleResourceBuilding { public: DeepMine(); };
+class ForestCave : public MultipleResourceBuilding { public: ForestCave(); };
+class ClayMine : public MultipleResourceBuilding { public: ClayMine(); };
+class WoodedFoothills : public MultipleResourceBuilding { public: WoodedFoothills(); };
 
-class IronMine : public BaseCard
-{
-public:
-	void CardEffect(Player & player);
-	IronMine();
-};
-
-class StoneQuarry : public BaseCard
-{
-public:
-	void CardEffect(Player & player);
-	StoneQuarry();
-};
-
-class ClayDeposit : public BaseCard
-{
-public:
-	void CardEffect(Player & player);
-	ClayDeposit();
-};
-
-// MERCHANTS
-class Marketplace : public BaseCard
-{
-	void CardEffect(Player& player);
-	Marketplace();
-};
-
-class WesternMarket : public BaseCard
-{
-	void CardEffect(Player& player);
-	WesternMarket();
-};
-
-class EasternMarket : public BaseCard
-{
-	void CardEffect(Player& player);
-	EasternMarket();
-};
-
-class Pub : public BaseCard
-{
-	void CardEffect(Player& player);
-	Pub();
-};
+// MILITARY
+class WoodenWall : public MilitaryBuilding { public: WoodenWall(); };
+class WatchTower : public MilitaryBuilding { public: WatchTower(); };
+class Barracks : public MilitaryBuilding { public: Barracks(); };
 
 // GOVERNMENT
-class Shrine : public BaseCard
-{
-public: // hack, no idea why it's needed
-	int ScorePoints(Player& player);
-	Shrine();
-};
-
-class PawnShop : public BaseCard
-{
-	int ScorePoints(Player& player);
-	PawnShop();
-};
-
-class Theatre : public BaseCard
-{
-	int ScorePoints(Player& player);
-	Theatre();
-};
-
-class Spa : public BaseCard
-{
-	int ScorePoints(Player& player);
-	Spa();
-};
+class Shrine : public  GovernmentBuilding { public: Shrine(); };
+class Spa : public GovernmentBuilding { public: Spa(); };
+class Theatre : public GovernmentBuilding { public: Theatre(); };
+class PawnShop : public GovernmentBuilding { public: PawnShop(); };
 
 // SCIENCE
-class ScribeShop : public BaseCard
+class ScriberShop : public ScienceBuilding { public: ScriberShop(); };
+class Aphotecary : public ScienceBuilding { public: Aphotecary(); };
+class Workshop : public ScienceBuilding { public: Workshop(); };
+
+// MERCHANT
+
+class Pub : public MilitaryBuilding 
 {
-	void CardEffect(Player& player);
-	ScribeShop();
+public:
+	Pub();
+	void CardEffect(Player& player) override;
+};
+class EasternMarket : public MilitaryBuilding 
+{
+public: 
+	EasternMarket();
+	void CardEffect(Player& player) override;
+};
+class WesternMarket : public MilitaryBuilding 
+{
+public:
+	WesternMarket();
+	void CardEffect(Player& player) override;
+};
+class Marketplace : public MilitaryBuilding 
+{
+public:
+	Marketplace();
+	void CardEffect(Player& player) override;
 };
 
-class Workshop : public BaseCard
-{
-	void CardEffect(Player& player);
-	Workshop();
-};
-
-class Aphotecary : public BaseCard
-{
-	void CardEffect(Player& player);
-	Aphotecary();
-};
-
-
-// GENERICS
 
 

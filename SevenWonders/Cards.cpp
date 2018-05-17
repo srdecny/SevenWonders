@@ -48,13 +48,48 @@ void BaseCard::CardEffect(Player& player)
 
 }
 
-SingleResourceProducer::SingleResourceProducer(Resources resource, int count)
-{
-	ProducedResource = resource;
-	Amount = count;
-}
 
-void SingleResourceProducer::CardEffect(Player& player)
+void SingleResourceBuilding::CardEffect(Player& player)
 {
 	player.ModifyTradableResources(ProducedResource, Amount);
+}
+
+void MultipleResourceBuilding::CardEffect(Player& player)
+{
+	player.Gold -= GoldCost;
+
+	// for every avaliable ResourceVector, make new vectors based on the avaliable resources
+	// so only one resource from AvaliableResource is avaliable at a given time
+	std::vector<ResourceVector> NewResources;
+
+	for (ResourceVector vector : player.TradableResources)
+	{
+		for (Resources resource : ProducedResources)
+		{
+			vector.ModifyResource(resource, 1);
+			NewResources.push_back(vector);
+		}
+	}
+
+	player.TradableResources.clear();
+
+	for (ResourceVector vector : NewResources)
+	{
+		player.TradableResources.push_back(vector);
+	}
+}
+
+void MilitaryBuilding::CardEffect(Player& player)
+{
+	player.MilitaryPoints += Power;
+}
+
+int GovernmentBuilding::ScorePoints(Player& player)
+{
+	return Points;
+}
+
+void ScienceBuilding::CardEffect(Player& player)
+{
+	player.ModifyScienceVectors(Symbol, 1);
 }

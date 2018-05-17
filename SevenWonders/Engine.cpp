@@ -179,3 +179,11 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 	}
 
 }
+
+void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
+{
+	for (ResourceVector& vector : player.TradableResources)
+	{
+		stream << "Avaliable resources: " << vector.PrintResourceVector() << std::endl;
+	}
+}

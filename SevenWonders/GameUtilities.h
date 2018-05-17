@@ -1,9 +1,12 @@
 #pragma once
 #include <array>
+#include <map>
 
 enum Resources { Wood, Clay, Iron, Stone, Glass, Cloth, Paper };
 enum CardTypes {CommonResource, RareResource, Military, Merchant, Science, Government, Guild};
 enum ScienceSymbols {Cog, Tableau, Compass};
+
+static std::map<Resources, std::string> ResourcesName = { {Wood, "Wood"}, {Clay, "Clay"}, { Iron, "Iron" }, { Stone, "Stone" }, { Glass, "Glass" }, { Cloth, "Cloth" }, { Paper, "Paper"} };
 
 class ResourceVector
 {
@@ -20,7 +23,7 @@ public:
     int& operator[](int index);
 
 	void ModifyResource(Resources resource, int change);
-
+	std::string PrintResourceVector();
 	std::array<int, 7> ResourcesArray;
 
 };

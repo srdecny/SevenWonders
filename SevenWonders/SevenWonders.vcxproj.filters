@@ -27,9 +27,6 @@
     <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FirstAgeCards.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -37,6 +34,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Wonders.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstAgeCards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

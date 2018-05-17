@@ -20,7 +20,7 @@ public:
 
 	std::string CardName;
 	std::vector<int> PlayerCount;
-	CardTypes type;
+	CardTypes Type;
 	int ID;
 	std::vector<int> PrerequisiteCards;
 
@@ -31,16 +31,52 @@ class CardThatCostGold : public BaseCard
 {
 public:
 	int GoldCost;
-	bool CanPlayerAffordThis(Player& player); // checks if player has enough gold too
+	bool CanPlayerAffordThis(Player& player);
 };
 
-class SingleResourceProducer : public BaseCard
+class SingleResourceBuilding : public BaseCard
 {
 public:
-	SingleResourceProducer(Resources resource, int count);
-	void CardEffect(Player& player);
-
-private:
 	Resources ProducedResource;
 	int Amount;
+	void CardEffect(Player& player) override;
+};
+
+class MilitaryBuilding : public BaseCard
+{
+	CardTypes Type = Military;
+public:
+	int Power;
+	void CardEffect(Player& player) override;
+};
+
+class GovernmentBuilding : public BaseCard
+{
+	CardTypes Type = Government;
+public:
+	int Points;
+	int ScorePoints(Player& player) override;
+};
+
+class MultipleResourceBuilding : public CardThatCostGold
+{
+public:
+	void CardEffect(Player& player) override; // will also make player pay gold
+	std::vector<Resources> ProducedResources;
+	int GoldCost;
+	CardTypes Type = CommonResource;
+};
+
+class ScienceBuilding : public BaseCard
+{
+public:
+	CardTypes Type = Science;
+	ScienceSymbols Symbol;
+	void CardEffect(Player& player) override;
+};
+
+class MerchantBuilding : public BaseCard
+{
+	CardTypes Type = Merchant;
+	virtual void CardEffect(Player& player) override { return; };
 };

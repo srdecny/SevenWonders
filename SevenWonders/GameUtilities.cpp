@@ -1,4 +1,5 @@
 #include "GameUtilities.h"
+#include <string>
 
 ResourceVector::ResourceVector()
 {
@@ -45,4 +46,18 @@ ScienceVector::ScienceVector()
 void ScienceVector::ModifyResource(ScienceSymbols symbol, int change)
 {
 	ScienceArray[symbol] += change;
+}
+
+std::string ResourceVector::PrintResourceVector()
+{
+	std::string result;
+	result += "{ ";
+	for (int i = 0; i < 7; i++)
+	{
+		result += ResourcesName[(Resources)i] + ": " + std::to_string(ResourcesArray[i]);
+		if (i != 6) result += ", ";
+	}
+	
+	result += " }";
+	return result;
 }
