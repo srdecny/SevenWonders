@@ -34,3 +34,13 @@ public:
 	bool CanPlayerAffordThis(Player& player); // checks if player has enough gold too
 };
 
+class SingleResourceProducer : public BaseCard
+{
+public:
+	SingleResourceProducer(Resources resource, int count);
+	void CardEffect(Player& player);
+
+private:
+	Resources ProducedResource;
+	int Amount;
+};

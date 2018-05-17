@@ -168,6 +168,10 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 		return new Gizah();
 		break;
 
+	case 2:
+		return new Rhodos();
+		break;
+
 	default:
 		return new Gizah();
 		break;

@@ -14,7 +14,10 @@ int main()
 	GameEngine engine;
 	engine.InitializeTheGame(3);
 
-    auto mine = make_shared<ClayMine>();
+    // auto mine = make_shared<ClayMine>();
+
+	auto mine = make_shared<SingleResourceProducer>(Iron, 1);
+	mine->CardName = "Mine";
     auto wall = make_shared<WoodenWall>();
     auto mill = make_shared<LumberMill>();
     auto statue = make_shared<Shrine>();

@@ -48,3 +48,13 @@ void BaseCard::CardEffect(Player& player)
 
 }
 
+SingleResourceProducer::SingleResourceProducer(Resources resource, int count)
+{
+	ProducedResource = resource;
+	Amount = count;
+}
+
+void SingleResourceProducer::CardEffect(Player& player)
+{
+	player.ModifyTradableResources(ProducedResource, Amount);
+}

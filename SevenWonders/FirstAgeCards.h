@@ -129,3 +129,7 @@ class Aphotecary : public BaseCard
 	Aphotecary();
 };
 
+
+// GENERICS
+
+
