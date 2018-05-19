@@ -19,18 +19,25 @@ int main()
 	auto mill = make_shared<LumberMill>();
     auto statue = make_shared<Shrine>();
 	auto workshop = make_shared<Workshop>();
+
+	mill->Play(engine.Players[1]);
+	engine.Players[0].Gold = 3;
     
-	/*
-	mine->Play(engine.Players[1]);
-    mill->Play(engine.Players[1]);
-    statue->Play(engine.Players[1]);
-	forestry->Play(engine.Players[1]);
-	workshop->Play(engine.Players[1]);
-	*/
-	vector<shared_ptr<BaseCard>> vector { wall, mine };
-	engine.PresentCardsToPlayer(std::cout, engine.Players[0], vector);
-    cout << "Player has scored: " << engine.ScorePlayerPoints(engine.Players[1]) << endl;
-	engine.PrintPlayerStats(cout, engine.Players[1] );
+	vector<shared_ptr<BaseCard>> vector;
+	vector.push_back(mine);
+	vector.push_back(forestry);
+	vector.push_back(wall);
+	vector.push_back(mill);
+	vector.push_back(statue);
+	vector.push_back(workshop);
+
+
+	engine.PlayersHands[0] = vector;
+	engine.ProcessSingleTurn();
+	
+	engine.PrintPlayerStats(cout, engine.Players[0] );
+	cout << engine.ScorePlayerPoints(engine.Players[0]);
+	
 
 	getchar();
 }

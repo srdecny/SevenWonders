@@ -5,6 +5,7 @@
 
 GameEngine::GameEngine()
 {
+	
 }
 
 GameEngine::~GameEngine()
@@ -40,20 +41,91 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 	{
 		Players[l].Wonder = GenerateWonder(WondersToDistribute[l]);
 		Players[l].Wonder->InitialResource(Players[l]); // give the starting resource
+
+		GoldTransactions.push_back(0);
+		PlayersHands.push_back(std::vector<std::shared_ptr<BaseCard>>());
 	}
+
+
 	
 }
 
-void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>> cards)
+void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
-	stream << "Cards you can play this turn: " << std::endl;
+	std::vector<std::shared_ptr<BaseCard>> CanAfford;
+	std::vector<std::shared_ptr<BaseCard>> CanNotAfford;
+	std::map<std::shared_ptr<BaseCard>, std::vector<int>> CardPriceMap;
+
 	for (auto& card : cards)
 	{
-        auto cost = DetermineLowestBuyingCost(player, card); // if 0 then can't buy it from neighbours
-        
-        if (card->CanPlayerAffordThis(player)) stream << "You can afford thics for free: " << card->CardName() << std::endl;
-        else if (cost[0] <= player.Gold) stream << "You can afford this for a minimum cost of: " << cost[0] << ", " << card->CardName() << std::endl;
-        else  stream << "You can't afford this card: " << card->CardName() << std::endl;
+		auto cost = DetermineLowestBuyingCost(player, card); // if 0 then can't buy it from neighbours
+
+		if (card->CanPlayerAffordThisForFree(player)) CanAfford.push_back(card);
+		else if (cost[0] <= player.Gold) CanAfford.push_back(card);
+		else CanNotAfford.push_back(card);
+
+		CardPriceMap.insert(std::make_pair(card, cost));
+
+	}
+
+	int PlayableIndex = 0;
+	for (auto& Playable : CanAfford)
+	{
+		if (Playable->CanPlayerAffordThisForFree(player))
+		{
+			stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName() <<" for free." << std::endl;
+
+		}
+		else
+		{
+			stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName();
+			stream << " for a cost of: " << std::to_string(CardPriceMap[Playable][0]);
+			stream << std::endl;
+		}
+
+		PlayableIndex++;
+	}
+
+	int UnplayableIndex = PlayableIndex;
+	for (auto& Unplayable : CanNotAfford)
+	{
+		stream << "(Index " << std::to_string(UnplayableIndex) << ") -- You can not afford " << Unplayable->CardName() << "." << std::endl;
+		UnplayableIndex++;
+	}
+
+	// REPL loop
+	while (true)
+	{
+		stream << "Avaliable commands: play X; discard X; wonder X; peek left/right; exit. X is index of the card." << std::endl;
+		std::string command;
+		std::getline(std::cin, command);
+
+		// because c++ doesn't support switch on strings, we have to use this horrible if-else tree
+
+		if (command.substr(0, 4) == "play" && command.length() == 6) // because the index will alway be a single digit
+		{
+			int CardIndex = command[5] - '0'; // convert the index to int
+			if (CardIndex >= 0 && CardIndex < PlayableIndex)
+			{
+				auto pair = std::make_pair(CanAfford[CardIndex], 0);
+				PlayedCardsQueue.push_back(pair);
+
+				auto IndexToRemove = std::find(cards.begin(), cards.end(), CanAfford[CardIndex]);
+				cards.erase(IndexToRemove);
+				
+				return;
+			}
+			else stream << "Invalid index!" << std::endl;
+				
+		}
+		else 
+		{
+			stream << "Invalid command!" << std::endl;
+		}
+
+
+		
+
 	}
 }
 
@@ -117,7 +189,7 @@ std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shar
 
 
 
-					int TotalCost = PaidToLeftThisPair + PaidToRightThisPair;
+					int TotalCost = PaidToLeftThisPair + PaidToRightThisPair + card->GoldCost;
 
 					if (MinimumCost > TotalCost && TotalCost > 0)
 					{
@@ -197,4 +269,37 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 		stream << "Science symbols: " << vector.PrintScienceVector() << std::endl;
 	}
 
+}
+
+void GameEngine::ClearGoldTransactions() { for (int& i : GoldTransactions) i = 0; }
+
+void GameEngine::ProcessSingleTurn()
+{
+	// first, we deal with the live player, which is always the first one
+	PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
+
+	// then let the AI pick the cards
+	for (int PlayerIndex = 1; PlayerIndex < (int)Players.capacity(); PlayerIndex++)
+	{
+		PresentCardstoAI(Players[PlayerIndex], PlayersHands[PlayerIndex]);
+	}
+
+	// then buy and play the cards at the same time
+
+	for (int gold = 0; gold < (int)GoldTransactions.capacity(); gold++)
+	{
+		Players[gold].Gold += GoldTransactions[gold];
+	}
+	ClearGoldTransactions();
+
+	for (auto& PlayedCard : PlayedCardsQueue)
+	{
+		PlayedCard.first->Play(Players[PlayedCard.second]);
+	}
+
+}
+
+void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards)
+{
+	return;
 }

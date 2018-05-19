@@ -10,7 +10,7 @@ class Player;
 class BaseCard : public std::enable_shared_from_this<BaseCard>
 {
 public:
-	void Play(Player&);
+	virtual void Play(Player&);
     virtual void CardEffect(Player&);
     virtual int ScorePoints(Player&) {return 0;}
 	BaseCard();
@@ -22,17 +22,19 @@ public:
 	std::vector<int> PlayerCount;
 	CardTypes Type;
 	int ID;
+	int GoldCost = 0;
 	std::vector<int> PrerequisiteCards;
 
 
-	bool CanPlayerAffordThis(Player& player);
+	bool CanPlayerAffordThisForFree(Player& player);
 };
 
 class CardThatCostGold : public BaseCard
 {
 public:
 	int GoldCost;
-	bool CanPlayerAffordThis(Player& player);
+	bool CanPlayerAffordThisForFree(Player& player);
+	void Play(Player&) override;
 };
 
 class SingleResourceBuilding : public BaseCard

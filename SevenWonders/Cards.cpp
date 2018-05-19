@@ -13,7 +13,7 @@ BaseCard::~BaseCard()
 	
 }
 
-bool BaseCard::CanPlayerAffordThis(Player& player)
+bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 {
 	for (ResourceVector &vector : player.TradableResources)
 	{
@@ -31,10 +31,21 @@ bool BaseCard::CanPlayerAffordThis(Player& player)
 	return false;
 }
 
-bool CardThatCostGold::CanPlayerAffordThis(Player& player)
+bool CardThatCostGold::CanPlayerAffordThisForFree(Player& player)
 {
-	bool CanAfford = player.Gold >= 1;
-	return CanAfford && BaseCard::CanPlayerAffordThis(player); // gotta have gold AND resources
+	/*
+	if (player.Gold < GoldCost) return false;
+	return BaseCard::CanPlayerAffordThis(player); // gotta have gold AND resources
+	*/
+
+	if (GoldCost == 0) return true;
+	return false;
+}
+
+void CardThatCostGold::Play(Player& player)
+{
+	player.Gold -= GoldCost;
+	CardEffect(player);
 }
 
 void BaseCard::Play(Player& player)
@@ -53,8 +64,6 @@ std::string BaseCard::CardName()
 	std::string result = typeid(*this).name(); // this is almost certainly wrong in some way
 	return result.substr(6, result.length() - 6); // discard the "class "
 }
-
-
 
 void SingleResourceBuilding::CardEffect(Player& player)
 {
