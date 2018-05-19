@@ -3,11 +3,17 @@
 
 BaseWonder::BaseWonder()
 {
-    return;
+	GetNextWonderBuilding();
 }
 BaseWonder::~BaseWonder()
 {
     return;
+}
+
+void BaseWonder::GetNextWonderBuilding()
+{
+	if (WonderLevel == WonderBuildings.capacity()) CurrentBuilding = nullptr;
+	else CurrentBuilding = std::make_shared<BaseCard>(WonderBuildings[WonderLevel]);
 }
 
 Gizah::Gizah()

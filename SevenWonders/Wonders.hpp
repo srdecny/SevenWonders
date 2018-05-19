@@ -18,6 +18,9 @@ public:
     int WonderLevel;
 	int CurrentLevel = 0;
     std::vector<BaseCard> WonderBuildings;
+	std::shared_ptr<BaseCard> CurrentBuilding;
+
+	void GetNextWonderBuilding();
 };
 
 class Gizah : public BaseWonder

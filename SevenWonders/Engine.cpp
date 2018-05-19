@@ -42,7 +42,6 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 		Players[l].Wonder = GenerateWonder(WondersToDistribute[l]);
 		Players[l].Wonder->InitialResource(Players[l]); // give the starting resource
 
-		GoldTransactions.push_back(0);
 		PlayersHands.push_back(std::vector<std::shared_ptr<BaseCard>>());
 	}
 
@@ -55,6 +54,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	std::vector<std::shared_ptr<BaseCard>> CanAfford;
 	std::vector<std::shared_ptr<BaseCard>> CanNotAfford;
 	std::map<std::shared_ptr<BaseCard>, std::vector<int>> CardPriceMap;
+	bool CanAffordWonder = false;
 
 	for (auto& card : cards)
 	{
@@ -83,8 +83,6 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 				stream << " for a cost of: " << std::to_string(Playable->GoldCost);
 				stream << std::endl;
 			}
-			
-
 		}
 		else
 		{
@@ -92,7 +90,6 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 			stream << " for a cost of: " << std::to_string(CardPriceMap[Playable][0]);
 			stream << std::endl;
 		}
-
 		PlayableIndex++;
 	}
 
@@ -102,6 +99,33 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		stream << "(Index " << std::to_string(UnplayableIndex) << ") -- You can not afford " << Unplayable->CardName() << "." << std::endl;
 		UnplayableIndex++;
 	}
+
+	// get wonder if avaliable
+	auto WonderBuilding = player.Wonder->CurrentBuilding;
+	if (WonderBuilding == nullptr)
+	{
+		stream << "Your wonder is finished." << std::endl;
+	}
+	else
+	{
+		auto WonderCost = DetermineLowestBuyingCost(player, WonderBuilding);
+		if (WonderBuilding->CanPlayerAffordThisForFree(player))
+		{
+			stream << "You can afford the next wonder stage for free." << std::endl;
+			CanAffordWonder = true;
+		}
+		else if (WonderCost[0] <= player.Gold)
+		{
+			stream << "You can afford the next wonder stage for: " << std::to_string(WonderCost[0]) << "." << std::endl;
+			CanAffordWonder = true;
+		}
+		else
+		{
+			stream << "You can't afford the next wonder stage." << std::endl;
+		}
+	
+	}
+
 
 	// REPL loop
 	while (true)
@@ -118,7 +142,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 			if (CardIndex >= 0 && CardIndex < PlayableIndex)
 			{
 				auto pair = std::make_pair(CanAfford[CardIndex], 0);
-				PlayedCardsQueue.push_back(pair);
+				//PlayedCardsQueue.push_back(pair);
 
 				auto IndexToRemove = std::find(cards.begin(), cards.end(), CanAfford[CardIndex]);
 				cards.erase(IndexToRemove);
@@ -128,7 +152,19 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 			else stream << "Invalid index!" << std::endl;
 				
 		}
-		else 
+		else if (command.substr(0, 6) == "discard" && command.length() == 9)
+		{
+			int CardIndex = command[5] - '0'; // convert the index to int
+			if (CardIndex >= 0 && CardIndex < UnplayableIndex) // can discard unaffordable cards
+			{
+				DiscardedCard card;
+				card.Play(player);
+
+				auto IndexToRemove = std::find(cards.begin(), cards.end(), CanAfford[CardIndex]);
+				cards.erase(IndexToRemove);
+			}
+		}
+		else
 		{
 			stream << "Invalid command!" << std::endl;
 		}
@@ -281,7 +317,6 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 
 }
 
-void GameEngine::ClearGoldTransactions() { for (int& i : GoldTransactions) i = 0; }
 
 void GameEngine::ProcessSingleTurn()
 {
@@ -295,16 +330,14 @@ void GameEngine::ProcessSingleTurn()
 	}
 
 	// then buy and play the cards at the same time
-
-	for (int gold = 0; gold < (int)GoldTransactions.capacity(); gold++)
+	for (auto& transaction : GoldTransactions)
 	{
-		Players[gold].Gold += GoldTransactions[gold];
+		DistributeGoldToNeighbours(transaction.first, *transaction.second);
 	}
-	ClearGoldTransactions();
 
 	for (auto& PlayedCard : PlayedCardsQueue)
 	{
-		PlayedCard.first->Play(Players[PlayedCard.second]);
+		PlayedCard.first->Play(*PlayedCard.second);
 	}
 
 }
@@ -312,4 +345,28 @@ void GameEngine::ProcessSingleTurn()
 void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
 	return;
+}
+
+void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, Player& player)
+{
+	player.LeftNeighbour->Gold += GoldToDistribute[1];
+	player.RightNeighbour->Gold += GoldToDistribute[2];
+}
+
+void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> card, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand)
+{
+
+	if (card->CanPlayerAffordThisForFree(player))
+	{
+		auto EmptyTransaction = std::vector<int>() = { 0,0,0 };
+		GoldTransactions.push_back(std::make_pair(EmptyTransaction, &player));
+	}
+	else
+	{
+		GoldTransactions.push_back(std::make_pair(DetermineLowestBuyingCost(player, card), &player));
+	}
+
+	auto IndexToRemove = std::find(hand.begin(), hand.end(), card);
+	hand.erase(IndexToRemove);
+
 }

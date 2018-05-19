@@ -37,8 +37,8 @@ private:
 
 
 	// this should be in process turn method
-	std::vector<int> GoldTransactions;
-	void ClearGoldTransactions();
-
-	std::vector<std::pair<std::shared_ptr<BaseCard>, int>> PlayedCardsQueue;
+	std::vector<std::pair<std::vector<int>, Player*>> GoldTransactions;
+	std::vector<std::pair<std::shared_ptr<BaseCard>, Player*>> PlayedCardsQueue;
+	void DistributeGoldToNeighbours(std::vector<int> gold, Player& player);
+	void ProcessCardPurchase(std::shared_ptr<BaseCard> card, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand);
 };

@@ -116,3 +116,8 @@ int WonderBuilding::ScorePoints(Player& player)
 {
 	return Points;
 }
+
+void DiscardedCard::CardEffect(Player& player)
+{
+	player.Gold += 3;
+}

@@ -97,3 +97,9 @@ public:
 	CardTypes Type = Wonder;
 	WonderBuilding() { Type = Wonder; };
 };
+
+ class DiscardedCard : public BaseCard
+{
+public:
+	void CardEffect(Player& player) override;
+};
