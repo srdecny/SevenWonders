@@ -15,6 +15,8 @@ BaseCard::~BaseCard()
 
 bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 {
+	if (player.Gold < GoldCost) return false;
+
 	for (ResourceVector &vector : player.TradableResources)
 	{
 		if (vector >= CardCost) return true;
@@ -31,15 +33,13 @@ bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 	return false;
 }
 
+/*
 bool CardThatCostGold::CanPlayerAffordThisForFree(Player& player)
 {
-	/*
+	
 	if (player.Gold < GoldCost) return false;
-	return BaseCard::CanPlayerAffordThis(player); // gotta have gold AND resources
-	*/
-
-	if (GoldCost == 0) return true;
-	return false;
+	return BaseCard::CanPlayerAffordThisForFree(player); // gotta have gold AND resources
+	
 }
 
 void CardThatCostGold::Play(Player& player)
@@ -47,6 +47,7 @@ void CardThatCostGold::Play(Player& player)
 	player.Gold -= GoldCost;
 	CardEffect(player);
 }
+*/
 
 void BaseCard::Play(Player& player)
 {

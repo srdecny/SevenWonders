@@ -29,13 +29,15 @@ public:
 	bool CanPlayerAffordThisForFree(Player& player);
 };
 
+/*
 class CardThatCostGold : public BaseCard
 {
 public:
-	int GoldCost;
+	//int GoldCost;
 	bool CanPlayerAffordThisForFree(Player& player);
 	void Play(Player&) override;
 };
+*/
 
 class SingleResourceBuilding : public BaseCard
 {
@@ -47,27 +49,26 @@ public:
 
 class MilitaryBuilding : public BaseCard
 {
-	CardTypes Type = Military;
 public:
 	int Power;
 	void CardEffect(Player& player) override;
+	MilitaryBuilding() { Type = Military; };
 };
 
 class GovernmentBuilding : public BaseCard
 {
-	CardTypes Type = Government;
 public:
 	int Points;
 	int ScorePoints(Player& player) override;
+	GovernmentBuilding() { Type = Government; };
 };
 
-class MultipleResourceBuilding : public CardThatCostGold
+class MultipleResourceBuilding : public BaseCard
 {
 public:
 	void CardEffect(Player& player) override; // will also make player pay gold
 	std::vector<Resources> ProducedResources;
-	int GoldCost;
-	CardTypes Type = CommonResource;
+	MultipleResourceBuilding() { Type = CommonResource; };
 };
 
 class ScienceBuilding : public BaseCard
@@ -76,6 +77,7 @@ public:
 	CardTypes Type = Science;
 	ScienceSymbols Symbol;
 	void CardEffect(Player& player) override;
+	ScienceBuilding() { Type = Science; };
 };
 
 class MerchantBuilding : public BaseCard
@@ -83,6 +85,7 @@ class MerchantBuilding : public BaseCard
 public:
 	CardTypes Type = Merchant;
 	virtual void CardEffect(Player& player) override { return; };
+	MerchantBuilding() { Type = Merchant; };
 };
 
 class WonderBuilding : public BaseCard
@@ -92,7 +95,5 @@ public:
 	int ScorePoints(Player& player) override;
 	int Points;
 	CardTypes Type = Wonder;
-
-
-
+	WonderBuilding() { Type = Wonder; };
 };

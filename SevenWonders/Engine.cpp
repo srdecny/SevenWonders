@@ -58,7 +58,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 
 	for (auto& card : cards)
 	{
-		auto cost = DetermineLowestBuyingCost(player, card); // if 0 then can't buy it from neighbours
+		auto cost = DetermineLowestBuyingCost(player, card); 
 
 		if (card->CanPlayerAffordThisForFree(player)) CanAfford.push_back(card);
 		else if (cost[0] <= player.Gold) CanAfford.push_back(card);
@@ -73,7 +73,17 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	{
 		if (Playable->CanPlayerAffordThisForFree(player))
 		{
-			stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName() <<" for free." << std::endl;
+			if (Playable->GoldCost == 0)
+			{
+				stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName() << " for free." << std::endl;
+			}
+			else
+			{
+				stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName();
+				stream << " for a cost of: " << std::to_string(Playable->GoldCost);
+				stream << std::endl;
+			}
+			
 
 		}
 		else

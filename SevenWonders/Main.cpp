@@ -32,7 +32,7 @@ int main()
 	vector.push_back(workshop);
 
 
-	engine.PlayersHands[0] = vector;
+	engine.PlayersHands[0] = std::move(vector);
 	engine.ProcessSingleTurn();
 	
 	engine.PrintPlayerStats(cout, engine.Players[0] );
