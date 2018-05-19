@@ -61,3 +61,18 @@ std::string ResourceVector::PrintResourceVector()
 	result += " }";
 	return result;
 }
+
+
+std::string ScienceVector::PrintScienceVector()
+{
+	std::string result;
+	result += "{ ";
+	for (int i = 0; i < 3; i++)
+	{
+		result += SymbolsName[(ScienceSymbols)i] + ": " + std::to_string(ScienceArray[i]);
+		if (i != 2) result += ", ";
+	}
+
+	result += " }";
+	return result;
+}

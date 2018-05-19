@@ -7,6 +7,7 @@ Player::Player()
 {
 	Wonder = new Gizah();
 	TradableResources.push_back(ResourceVector());
+	ScienceVectors.push_back(ScienceVector());
 	Gold = 3;
 }
 

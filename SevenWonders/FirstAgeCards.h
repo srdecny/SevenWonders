@@ -37,25 +37,25 @@ class Workshop : public ScienceBuilding { public: Workshop(); };
 
 // MERCHANT
 
-class Pub : public MilitaryBuilding 
+class Pub : public MerchantBuilding 
 {
 public:
 	Pub();
 	void CardEffect(Player& player) override;
 };
-class EasternMarket : public MilitaryBuilding 
+class EasternMarket : public MerchantBuilding
 {
 public: 
 	EasternMarket();
 	void CardEffect(Player& player) override;
 };
-class WesternMarket : public MilitaryBuilding 
+class WesternMarket : public MerchantBuilding
 {
 public:
 	WesternMarket();
 	void CardEffect(Player& player) override;
 };
-class Marketplace : public MilitaryBuilding 
+class Marketplace : public MerchantBuilding
 {
 public:
 	Marketplace();

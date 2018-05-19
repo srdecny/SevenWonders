@@ -27,27 +27,6 @@ public:
     Gizah();
 };
 
-class Pyramides1 : public BaseCard
-{
-public:
-    Pyramides1();
-    int ScorePoints(Player& player);
-};
-
-class Pyramides2 : public BaseCard
-{
-public:
-    Pyramides2();
-    int ScorePoints(Player& player);
-};
-
-class Pyramides3 : public BaseCard
-{
-public:
-    Pyramides3();
-    int ScorePoints(Player& player);
-};
-
 class Rhodos : public BaseWonder
 {
 public:
@@ -55,23 +34,27 @@ public:
 	Rhodos();
 };
 
-class Rhodos1 : public BaseCard
+class BaseFirstStage : public WonderBuilding
 {
 public:
-	Rhodos1();
-	int ScorePoints(Player& player);
+	BaseFirstStage();
 };
 
-class Rhodos2 : public BaseCard
+class BaseThirdStage : public WonderBuilding
 {
 public:
-	Rhodos2();
-	void CardEffect(Player& player);
+	BaseThirdStage();
 };
 
-class Rhodos3 : public BaseCard
+class GizahSecondStage : public WonderBuilding
 {
 public:
-	Rhodos3();
-	int ScorePoints(Player& player);
+	GizahSecondStage();
+};
+
+class RhodosSecondStage : public WonderBuilding
+{
+public:
+	RhodosSecondStage();
+	void CardEffect(Player& player) override;
 };

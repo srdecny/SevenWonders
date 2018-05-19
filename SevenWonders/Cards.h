@@ -18,11 +18,12 @@ public:
 
 	ResourceVector CardCost;
 
-	std::string CardName;
+	std::string CardName();
 	std::vector<int> PlayerCount;
 	CardTypes Type;
 	int ID;
 	std::vector<int> PrerequisiteCards;
+
 
 	bool CanPlayerAffordThis(Player& player);
 };
@@ -77,6 +78,19 @@ public:
 
 class MerchantBuilding : public BaseCard
 {
+public:
 	CardTypes Type = Merchant;
 	virtual void CardEffect(Player& player) override { return; };
+};
+
+class WonderBuilding : public BaseCard
+{
+public:
+	virtual void CardEffect(Player& player) override { return; };
+	int ScorePoints(Player& player) override;
+	int Points;
+	CardTypes Type = Wonder;
+
+
+
 };

@@ -13,7 +13,9 @@ BaseWonder::~BaseWonder()
 Gizah::Gizah()
 {
 	WonderLevel = 3;
-	WonderBuildings = { Pyramides1(), Pyramides2(), Pyramides3() };
+	WonderBuildings = { BaseFirstStage(), GizahSecondStage(), BaseThirdStage() };
+	WonderBuildings[0].CardCost.ModifyResource(Stone, 2);
+	WonderBuildings[2].CardCost.ModifyResource(Stone, 4);
 }
 
 void Gizah::InitialResource(Player &player)
@@ -21,41 +23,13 @@ void Gizah::InitialResource(Player &player)
     player.ModifyTradableResources(Stone, 1);
 }
 
-Pyramides1::Pyramides1()
-{
-    CardCost.ModifyResource(Stone, 2);
-}
-
-int Pyramides1::ScorePoints(Player& player)
-{
-    return 3;
-}
-
-Pyramides2::Pyramides2()
-{
-    CardCost.ModifyResource(Wood, 3);
-}
-
-int Pyramides2::ScorePoints(Player& player)
-{
-    return 5;
-};
-
-Pyramides3::Pyramides3()
-{
-    CardCost.ModifyResource(Stone, 4);
-}
-
-int Pyramides3::ScorePoints(Player &)
-{
-    return 7;
-};
-
 
 Rhodos::Rhodos()
 {
 	WonderLevel = 3;
-	WonderBuildings = { Rhodos1(), Rhodos2(), Rhodos3() };
+	WonderBuildings = { BaseFirstStage(), RhodosSecondStage(), BaseThirdStage() };
+	WonderBuildings[0].CardCost.ModifyResource(Wood, 2);
+	WonderBuildings[2].CardCost.ModifyResource(Iron, 4);
 }
 
 void Rhodos::InitialResource(Player& player)
@@ -63,32 +37,30 @@ void Rhodos::InitialResource(Player& player)
 	player.ModifyTradableResources(Iron, 1);
 }
 
-Rhodos1::Rhodos1()
+
+BaseFirstStage::BaseFirstStage()
 {
-	CardCost.ModifyResource(Wood, 2);
+	Points = 3;
 }
 
-int Rhodos1::ScorePoints(Player& player)
+BaseThirdStage::BaseThirdStage()
 {
-	return 3;
+	Points = 7;
 }
 
-Rhodos2::Rhodos2()
+
+GizahSecondStage::GizahSecondStage()
+{
+	CardCost.ModifyResource(Stone, 2);
+	Points = 5;
+}
+
+RhodosSecondStage::RhodosSecondStage()
 {
 	CardCost.ModifyResource(Clay, 3);
 }
 
-void Rhodos2::CardEffect(Player& player)
+void RhodosSecondStage::CardEffect(Player& player)
 {
 	player.MilitaryPoints += 2;
-}
-
-Rhodos3::Rhodos3()
-{
-	CardCost.ModifyResource(Iron, 4);
-}
-
-int Rhodos3::ScorePoints(Player& player)
-{
-	return 7;
 }

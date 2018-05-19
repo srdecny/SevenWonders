@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Cards.h"
 #include "Wonders.hpp"
+#include <ctime>
 
 GameEngine::GameEngine()
 {
@@ -31,12 +32,14 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 	
 	// randomly assign wonders to players
 	std::vector<int> WondersToDistribute = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+	std::srand(std::time(0)); // get random seed, or the shuffle will be the same every time
 	std::random_shuffle(WondersToDistribute.begin(), WondersToDistribute.end());
-	for (int k = 7 - PlayerCount; k > 0; k--) WondersToDistribute.pop_back(); // discard excess wonders
 
 	for (int l = 0; l < PlayerCount; l++)
 	{
 		Players[l].Wonder = GenerateWonder(WondersToDistribute[l]);
+		Players[l].Wonder->InitialResource(Players[l]); // give the starting resource
 	}
 	
 }
@@ -48,9 +51,9 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	{
         auto cost = DetermineLowestBuyingCost(player, card); // if 0 then can't buy it from neighbours
         
-        if (card->CanPlayerAffordThis(player)) stream << "You can afford this for free: " << card->CardName << std::endl;
-        else if (cost[0] != 0 || cost[0] > player.Gold) stream << "You can afford this for a minimum cost of: " << cost[0] << ", " << card->CardName << std::endl;
-        else  stream << "You can't afford this card: " << card->CardName << std::endl;
+        if (card->CanPlayerAffordThis(player)) stream << "You can afford thics for free: " << card->CardName() << std::endl;
+        else if (cost[0] <= player.Gold) stream << "You can afford this for a minimum cost of: " << cost[0] << ", " << card->CardName() << std::endl;
+        else  stream << "You can't afford this card: " << card->CardName() << std::endl;
 	}
 }
 
@@ -173,7 +176,7 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 		break;
 
 	default:
-		return new Gizah();
+		return new Rhodos();
 		break;
 		//throw std::exception("Wonder not implemented!");
 	}
@@ -182,8 +185,16 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 
 void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 {
+
+	stream << "Avaliable Gold: " << std::to_string(player.Gold) << "; Military Points: " << std::to_string(player.MilitaryPoints) << std::endl;
 	for (ResourceVector& vector : player.TradableResources)
 	{
 		stream << "Avaliable resources: " << vector.PrintResourceVector() << std::endl;
 	}
+
+	for (ScienceVector& vector : player.ScienceVectors)
+	{
+		stream << "Science symbols: " << vector.PrintScienceVector() << std::endl;
+	}
+
 }

@@ -48,6 +48,13 @@ void BaseCard::CardEffect(Player& player)
 
 }
 
+std::string BaseCard::CardName()
+{
+	std::string result = typeid(*this).name(); // this is almost certainly wrong in some way
+	return result.substr(6, result.length() - 6); // discard the "class "
+}
+
+
 
 void SingleResourceBuilding::CardEffect(Player& player)
 {
@@ -62,20 +69,21 @@ void MultipleResourceBuilding::CardEffect(Player& player)
 	// so only one resource from AvaliableResource is avaliable at a given time
 	std::vector<ResourceVector> NewResources;
 
-	for (ResourceVector vector : player.TradableResources)
+	for (ResourceVector OldVector : player.TradableResources)
 	{
-		for (Resources resource : ProducedResources)
+		for (Resources Resource : ProducedResources)
 		{
-			vector.ModifyResource(resource, 1);
-			NewResources.push_back(vector);
+			auto NewVector = ResourceVector(OldVector);
+			NewVector.ModifyResource(Resource, 1);
+			NewResources.push_back(NewVector);
 		}
 	}
 
 	player.TradableResources.clear();
 
-	for (ResourceVector vector : NewResources)
+	for (ResourceVector NewVector : NewResources)
 	{
-		player.TradableResources.push_back(vector);
+		player.TradableResources.push_back(NewVector);
 	}
 }
 
@@ -92,4 +100,9 @@ int GovernmentBuilding::ScorePoints(Player& player)
 void ScienceBuilding::CardEffect(Player& player)
 {
 	player.ModifyScienceVectors(Symbol, 1);
+}
+
+int WonderBuilding::ScorePoints(Player& player)
+{
+	return Points;
 }
