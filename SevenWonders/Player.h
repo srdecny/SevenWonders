@@ -26,11 +26,15 @@ public:
 	int CommonResourceCostRight = 2;
 	int RareResourceCost = 2;
 
+	int MilitaryLoses;
+	int MilitaryWins;
+
+	int MilitaryPoints = 0;
+
 	BaseWonder* Wonder;
 
 	Player* LeftNeighbour;
 	Player* RightNeighbour;
 
-	int MilitaryPoints = 0;
 };
 

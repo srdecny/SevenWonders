@@ -11,13 +11,16 @@
 class GameEngine
 {
 public:
-	GameEngine();
+	GameEngine(int PlayerCount);
 	~GameEngine();
 
+	void PlayTheGame();
+
+	int PlayerCount;
 	std::vector<Player> Players;
 	std::vector<std::vector<std::shared_ptr<BaseCard>>> PlayersHands;
 
-	void InitializeTheGame(int PlayerCount);
+	void InitializeTheGame();
 	int ScorePlayerPoints(Player& player);
 
 	void ProcessSingleTurn();
@@ -40,5 +43,9 @@ private:
 	std::vector<std::pair<std::vector<int>, Player*>> GoldTransactions;
 	std::vector<std::pair<std::shared_ptr<BaseCard>, Player*>> PlayedCardsQueue;
 	void DistributeGoldToNeighbours(std::vector<int> gold, Player& player);
-	void ProcessCardPurchase(std::shared_ptr<BaseCard> card, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand);
+
+	// adds card and gold transaction to queue and updates the hand
+	void ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::shared_ptr<BaseCard> CardToDiscard, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand);
+
+	void CalculateMilitaryFights(int PointsForWin);
 };

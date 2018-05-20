@@ -2,6 +2,8 @@
 #include "Cards.h"
 #include "Player.h"
 
+static std::vector < std::shared_ptr<BaseCard>> GenerateFirstAgeCards(int PlayerCount);
+
 // RESOURCES
 class ClayDeposit : public SingleResourceBuilding { public: ClayDeposit(); };
 class IronMine : public SingleResourceBuilding { public: IronMine(); };

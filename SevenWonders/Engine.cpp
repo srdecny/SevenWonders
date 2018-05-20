@@ -1,25 +1,27 @@
 #include "Engine.h"
 #include "Cards.h"
 #include "Wonders.hpp"
+#include "CardGenerator.hpp"
 #include <ctime>
+#include <algorithm>
 
-GameEngine::GameEngine()
+GameEngine::GameEngine(int count)
 {
-	
+	PlayerCount = count;
 }
 
 GameEngine::~GameEngine()
 {
 }
 
-void GameEngine::InitializeTheGame(int PlayerCount)
+void GameEngine::InitializeTheGame()
 {
 	if (PlayerCount <= 2 || PlayerCount > 7) throw std::invalid_argument("Invalid player count!");
 
 	for (int i = 0; i < PlayerCount; i++)
 	{
 		Players.push_back(Player());
-		Players[i].Gold = i; // TEST PURPOSES
+		Players[i].Gold = 3; 
 	}
 
     // assign neighbours
@@ -51,26 +53,28 @@ void GameEngine::InitializeTheGame(int PlayerCount)
 
 void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
-	std::vector<std::shared_ptr<BaseCard>> CanAfford;
-	std::vector<std::shared_ptr<BaseCard>> CanNotAfford;
 	std::map<std::shared_ptr<BaseCard>, std::vector<int>> CardPriceMap;
+	std::vector<int> PlayableCardIndexes;
+	std::vector<int> UnplayableCardIndexes;
 	bool CanAffordWonder = false;
 
+	int index = 0;
 	for (auto& card : cards)
 	{
 		auto cost = DetermineLowestBuyingCost(player, card); 
 
-		if (card->CanPlayerAffordThisForFree(player)) CanAfford.push_back(card);
-		else if (cost[0] <= player.Gold) CanAfford.push_back(card);
-		else CanNotAfford.push_back(card);
+		if (card->CanPlayerAffordThisForFree(player)) PlayableCardIndexes.push_back(index);
+		else if (cost[0] <= player.Gold) PlayableCardIndexes.push_back(index);
+		else UnplayableCardIndexes.push_back(index);
 
 		CardPriceMap.insert(std::make_pair(card, cost));
+		index++;
 
 	}
 
-	int PlayableIndex = 0;
-	for (auto& Playable : CanAfford)
+	for (int PlayableIndex : PlayableCardIndexes)
 	{
+		auto Playable = cards[PlayableIndex];
 		if (Playable->CanPlayerAffordThisForFree(player))
 		{
 			if (Playable->GoldCost == 0)
@@ -90,14 +94,12 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 			stream << " for a cost of: " << std::to_string(CardPriceMap[Playable][0]);
 			stream << std::endl;
 		}
-		PlayableIndex++;
 	}
 
-	int UnplayableIndex = PlayableIndex;
-	for (auto& Unplayable : CanNotAfford)
+	for (int UnplayableIndex : UnplayableCardIndexes)
 	{
+		auto Unplayable = cards[UnplayableIndex];
 		stream << "(Index " << std::to_string(UnplayableIndex) << ") -- You can not afford " << Unplayable->CardName() << "." << std::endl;
-		UnplayableIndex++;
 	}
 
 	// get wonder if avaliable
@@ -130,7 +132,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	// REPL loop
 	while (true)
 	{
-		stream << "Avaliable commands: play X; discard X; wonder X; peek left/right; exit. X is index of the card." << std::endl;
+		stream << "Avaliable commands: play X; discard X; wonder X; stats left/right/me; exit. X is index of the card." << std::endl;
 		std::string command;
 		std::getline(std::cin, command);
 
@@ -139,30 +141,58 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		if (command.substr(0, 4) == "play" && command.length() == 6) // because the index will alway be a single digit
 		{
 			int CardIndex = command[5] - '0'; // convert the index to int
-			if (CardIndex >= 0 && CardIndex < PlayableIndex)
+			if (std::find(PlayableCardIndexes.begin(), PlayableCardIndexes.end(), CardIndex) != PlayableCardIndexes.end())
 			{
-				auto pair = std::make_pair(CanAfford[CardIndex], 0);
-				//PlayedCardsQueue.push_back(pair);
-
-				auto IndexToRemove = std::find(cards.begin(), cards.end(), CanAfford[CardIndex]);
-				cards.erase(IndexToRemove);
-				
+				ProcessCardPurchase(cards[CardIndex], cards[CardIndex], player, cards);
 				return;
 			}
 			else stream << "Invalid index!" << std::endl;
 				
 		}
-		else if (command.substr(0, 6) == "discard" && command.length() == 9)
+		else if (command.substr(0, 7) == "discard" && command.length() == 9)
 		{
-			int CardIndex = command[5] - '0'; // convert the index to int
-			if (CardIndex >= 0 && CardIndex < UnplayableIndex) // can discard unaffordable cards
+			int CardIndex = command[8] - '0'; // convert the index to int
+			if (CardIndex >= 0 && CardIndex < (int)cards.capacity()) // can discard unaffordable cards
 			{
-				DiscardedCard card;
-				card.Play(player);
-
-				auto IndexToRemove = std::find(cards.begin(), cards.end(), CanAfford[CardIndex]);
-				cards.erase(IndexToRemove);
+				auto discard = std::make_shared<DiscardedCard>();
+				ProcessCardPurchase(discard, cards[CardIndex], player, cards);
+				return;
 			}
+		}
+		else if (command.substr(0, 6) == "wonder" && command.length() == 8)
+		{
+			if (!CanAffordWonder) stream << "Can't afford wonder!" << std::endl;
+			else
+			{
+				int CardIndex = command[7] - '0'; // convert the index to int
+				if (CardIndex >= 0 && CardIndex < (int)cards.capacity()) // can discard unaffordable cards
+				{
+					ProcessCardPurchase(player.Wonder->CurrentBuilding, cards[CardIndex], player, cards);
+					player.Wonder->GetNextWonderBuilding();
+					return;
+				}
+			}
+		}
+		else if(command.substr(0, 5) == "stats" && command.length() <= 12)
+		{
+			if (command.substr(6, 4) == "left")
+			{
+				stream << "Left neighbour stats: " << std::endl; PrintPlayerStats(std::cout, *player.LeftNeighbour);
+			}
+			else if (command.substr(6, 5) == "right")
+			{
+				stream << "Right neighbour stats: " << std::endl; PrintPlayerStats(std::cout, *player.RightNeighbour);
+			}
+			else if (command.substr(6, 2) == "me")
+			{
+				stream << "Your stats: " << std::endl; PrintPlayerStats(std::cout, player);
+			}
+			else stream << "Invalid command!" << std::endl;
+
+		}
+		else if (command.substr(0, 4) == "exit")
+		{
+			exit(0);
 		}
 		else
 		{
@@ -317,7 +347,6 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 
 }
 
-
 void GameEngine::ProcessSingleTurn()
 {
 	// first, we deal with the live player, which is always the first one
@@ -328,6 +357,8 @@ void GameEngine::ProcessSingleTurn()
 	{
 		PresentCardstoAI(Players[PlayerIndex], PlayersHands[PlayerIndex]);
 	}
+
+	PrintPlayerStats(std::cout, Players[0]);
 
 	// then buy and play the cards at the same time
 	for (auto& transaction : GoldTransactions)
@@ -353,20 +384,58 @@ void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, P
 	player.RightNeighbour->Gold += GoldToDistribute[2];
 }
 
-void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> card, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand)
+void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::shared_ptr<BaseCard>CardToDiscard, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand)
 {
 
-	if (card->CanPlayerAffordThisForFree(player))
+	if (CardToPlay->CanPlayerAffordThisForFree(player))
 	{
 		auto EmptyTransaction = std::vector<int>() = { 0,0,0 };
 		GoldTransactions.push_back(std::make_pair(EmptyTransaction, &player));
 	}
 	else
 	{
-		GoldTransactions.push_back(std::make_pair(DetermineLowestBuyingCost(player, card), &player));
+		GoldTransactions.push_back(std::make_pair(DetermineLowestBuyingCost(player, CardToPlay), &player));
 	}
 
-	auto IndexToRemove = std::find(hand.begin(), hand.end(), card);
+	PlayedCardsQueue.push_back(std::make_pair(CardToPlay, &player));
+
+	auto IndexToRemove = std::find(hand.begin(), hand.end(), CardToDiscard);
 	hand.erase(IndexToRemove);
 
 }
+
+void GameEngine::PlayTheGame()
+{
+	InitializeTheGame();
+
+	Generator CardGenerator;
+	PlayersHands = CardGenerator.GenerateFirstAgeCards(PlayerCount);
+	
+	for (int turn = 0; turn < 7; turn++)
+	{
+		ProcessSingleTurn();
+	}
+	CalculateMilitaryFights(1);
+	PrintPlayerStats(std::cout, Players[0]);
+}
+
+void GameEngine::CalculateMilitaryFights(int PointsForWin)
+{
+
+	// since everyone will compare himself and his left neighbour, it will circle around
+	// so player's both neighbours will be compared in the end
+	for (Player& player : Players)
+	{
+		if (player.MilitaryPoints > player.LeftNeighbour->MilitaryPoints)
+		{
+			player.MilitaryWins += PointsForWin;
+			player.LeftNeighbour->MilitaryLoses -= 1;
+		}
+		else if (player.MilitaryPoints < player.LeftNeighbour->MilitaryPoints)
+		{
+			player.LeftNeighbour->MilitaryWins += PointsForWin;
+			player.MilitaryLoses -= 1;
+		}
+	}
+}
+
