@@ -156,7 +156,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 			{
 				auto discard = std::make_shared<DiscardedCard>();
 				ProcessCardPurchase(discard, cards[CardIndex], player, cards);
-				return;
+				break;
 			}
 		}
 		else if (command.substr(0, 6) == "wonder" && command.length() == 8)
@@ -169,7 +169,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 				{
 					ProcessCardPurchase(player.Wonder->CurrentBuilding, cards[CardIndex], player, cards);
 					player.Wonder->GetNextWonderBuilding();
-					return;
+					break;
 				}
 			}
 		}
@@ -198,11 +198,9 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		{
 			stream << "Invalid command!" << std::endl;
 		}
-
-
-		
-
 	}
+
+	stream << std::endl;	
 }
 
 bool GameEngine::PlayerCanAffordCard(Player &player, std::shared_ptr<BaseCard> card)
@@ -358,8 +356,6 @@ void GameEngine::ProcessSingleTurn()
 		PresentCardstoAI(Players[PlayerIndex], PlayersHands[PlayerIndex]);
 	}
 
-	PrintPlayerStats(std::cout, Players[0]);
-
 	// then buy and play the cards at the same time
 	for (auto& transaction : GoldTransactions)
 	{
@@ -371,11 +367,19 @@ void GameEngine::ProcessSingleTurn()
 		PlayedCard.first->Play(*PlayedCard.second);
 	}
 
+	std::rotate(PlayersHands.begin(), PlayersHands.begin() + 1, PlayersHands.end()); // pass the cards clockwise
+
+	GoldTransactions.clear();
+	PlayedCardsQueue.clear();
+
+	PrintPlayerStats(std::cout, Players[0]);
+
+
 }
 
 void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
-	return;
+	ProcessCardPurchase(cards[0], cards[0], player, cards); // always plays the first card
 }
 
 void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, Player& player)
@@ -411,7 +415,7 @@ void GameEngine::PlayTheGame()
 	Generator CardGenerator;
 	PlayersHands = CardGenerator.GenerateFirstAgeCards(PlayerCount);
 	
-	for (int turn = 0; turn < 7; turn++)
+	for (int turn = 0; turn < 6; turn++)
 	{
 		ProcessSingleTurn();
 	}
