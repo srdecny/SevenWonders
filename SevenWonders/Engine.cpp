@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Engine.h"
 #include "Cards.h"
 #include "Wonders.hpp"
@@ -256,7 +257,7 @@ std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shar
 		{
 			for (ResourceVector &RightNeighbourResource : player.RightNeighbour->TradableResources)
 			{
-				int CostOfThisPair = 0; // how much will this pair cost us
+				//int CostOfThisPair = 0; // how much will this pair cost us
 				int PaidToLeftThisPair = 0;
 				int PaidToRightThisPair = 0;
 
@@ -320,6 +321,7 @@ int GameEngine::ScorePlayerPoints(Player &player)
 	ScoredPoints += player.MilitaryLoses;
 	ScoredPoints += player.MilitaryWins;
 	ScoredPoints += ScoreSciencePoints(player);
+	ScoredPoints += player.Gold / 3;
 	return ScoredPoints;
 }
 
@@ -384,10 +386,10 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 void GameEngine::ProcessSingleTurn(int CardRotation)
 {
 	// first, we deal with the live player, which is always the first one
-	PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
+	// PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
 
 	// then let the AI pick the cards
-	for (int PlayerIndex = 1; PlayerIndex < (int)Players.capacity(); PlayerIndex++)
+	for (int PlayerIndex = 0; PlayerIndex < (int)Players.capacity(); PlayerIndex++)
 	{
 		PresentCardstoAI(Players[PlayerIndex], PlayersHands[PlayerIndex]);
 	}
@@ -404,12 +406,12 @@ void GameEngine::ProcessSingleTurn(int CardRotation)
 	}
 
 	if (CardRotation == 1) std::rotate(PlayersHands.begin(), PlayersHands.begin() + 1, PlayersHands.end()); // pass the cards clockwise
-	else std::rotate(PlayersHands.begin(), PlayersHands.end(), PlayersHands.end()); // counterclockwise
+	else std::rotate(PlayersHands.begin(), PlayersHands.end() - 1, PlayersHands.end()); // counterclockwise
 
 	GoldTransactions.clear();
 	PlayedCardsQueue.clear();
 
-	PrintPlayerStats(std::cout, Players[0]);
+	//PrintPlayerStats(std::cout, Players[0]);
 
 
 }
@@ -421,6 +423,7 @@ void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<Ba
 
 void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, Player& player)
 {
+	player.Gold -= GoldToDistribute[0];
 	player.LeftNeighbour->Gold += GoldToDistribute[1];
 	player.RightNeighbour->Gold += GoldToDistribute[2];
 }
@@ -430,8 +433,10 @@ void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::
 
 	if (CardToPlay->CanPlayerAffordThisForFree(player))
 	{
+		/*
 		auto EmptyTransaction = std::vector<int>() = { 0,0,0 };
 		GoldTransactions.push_back(std::make_pair(EmptyTransaction, &player));
+		*/
 	}
 	else
 	{
@@ -465,7 +470,19 @@ void GameEngine::PlayTheGame()
 	}
 	CalculateMilitaryFights(3);
 
-	PrintPlayerStats(std::cout, Players[0]);
+
+	PlayersHands = CardGenerator.GenerateThirdAgeCards(PlayerCount);
+	for (int turn = 0; turn < 6; turn++)
+	{
+		ProcessSingleTurn(1);
+	}
+	CalculateMilitaryFights(5);
+
+	for (int index = 0; index < PlayerCount; index++)
+	{
+		std::cout << "------------------" << std::endl;
+		DisplayPlayersPoints(std::cout, index);
+	}
 }
 
 void GameEngine::CalculateMilitaryFights(int PointsForWin)
@@ -488,3 +505,31 @@ void GameEngine::CalculateMilitaryFights(int PointsForWin)
 	}
 }
 
+void GameEngine::DisplayPlayersPoints(std::ostream& stream, int PlayerIndex)
+{
+	stream << "Displaying scores for player number: " << std::to_string(PlayerIndex) << std::endl;
+	stream << "Military score: " << std::to_string(Players[PlayerIndex].MilitaryLoses + Players[PlayerIndex].MilitaryWins) << std::endl;;
+	stream << "Gold score: " << std::to_string(Players[PlayerIndex].Gold / 3) << std::endl;;
+	int GovernmentScore = 0;
+	int MerchantScore = 0;
+	int GuildScore = 0;
+	int ScienceScore = ScoreSciencePoints(Players[PlayerIndex]);
+	int WonderScore = 0;
+	for (auto card : Players[PlayerIndex].PlayedCards)
+	{
+		if (card->Type == Government) GovernmentScore += card->ScorePoints(Players[PlayerIndex]);
+		if (card->Type == Merchant) MerchantScore += card->ScorePoints(Players[PlayerIndex]);
+		if (card->Type == Guild) GuildScore += card->ScorePoints(Players[PlayerIndex]);
+		if (card->Type == Wonder) WonderScore += card->ScorePoints(Players[PlayerIndex]);
+
+	}
+
+	stream << "Government score: " << std::to_string(GovernmentScore) << std::endl;
+	stream << "Merchant score: " << std::to_string(MerchantScore) << std::endl;
+	stream << "Guild score: " << std::to_string(GuildScore) << std::endl;
+	stream << "Science score: " << std::to_string(ScienceScore) << std::endl;
+	stream << "Wonder score: " << std::to_string(WonderScore) << std::endl;
+
+	stream << "Total score: " << std::to_string(ScorePlayerPoints(Players[PlayerIndex])) << std::endl;
+
+}

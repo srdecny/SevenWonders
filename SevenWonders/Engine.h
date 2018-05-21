@@ -47,6 +47,6 @@ private:
 
 	// adds card and gold transaction to queue and updates the hand
 	void ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::shared_ptr<BaseCard> CardToDiscard, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand);
-
+	void DisplayPlayersPoints(std::ostream& stream, int PlayerIndex);
 	void CalculateMilitaryFights(int PointsForWin);
 };

@@ -54,7 +54,7 @@ public:
 class GovernmentBuilding : public BaseCard
 {
 public:
-	int Points;
+	int Points = 0;
 	int ScorePoints(Player& player) override;
 	GovernmentBuilding() { Type = Government; };
 	std::string CardInfo() override;
@@ -97,7 +97,7 @@ public:
 	virtual void CardEffect(Player& player) override { return; };
 	int ScorePoints(Player& player) override;
 	std::string CardInfo() override { return "Not implemented!"; };
-	int Points;
+	int Points = 0;
 	CardTypes Type = Wonder;
 	WonderBuilding() { Type = Wonder; };
 };
@@ -107,7 +107,7 @@ class GuildBuilding : public BaseCard
 public:
 	virtual int ScorePoints(Player& player) override;
 	virtual std::string CardInfo() override;
-	GuildBuilding() { Type = Guild; }
+	GuildBuilding() { Type = Guild; PlayerCount = { 3 }; }; // every guild can appear only once
 	CardTypes ScoringType;
 	int PointMultiplier;
 };

@@ -1,3 +1,5 @@
+#pragma once
+#include "stdafx.h"
 #include "Cards.h"
 #include "Player.h"
 #include <iostream>

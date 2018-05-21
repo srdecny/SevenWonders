@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "ThirdAgeCards.h"
 #include "Player.h"
 
@@ -113,7 +114,7 @@ int TradingCompany::ScorePoints(Player& player)
 	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
-		if (card->Type = RareResource) CardCount++;
+		if (card->Type == RareResource) CardCount++;
 	}
 
 	return CardCount * 2;
@@ -142,7 +143,7 @@ int Lighthouse::ScorePoints(Player& player)
 	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
-		if (card->Type = Merchant) CardCount++;
+		if (card->Type == Merchant) CardCount++;
 	}
 
 	return CardCount;
@@ -172,7 +173,7 @@ int Harbor::ScorePoints(Player& player)
 	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
-		if (card->Type = CommonResource) CardCount++;
+		if (card->Type == CommonResource) CardCount++;
 	}
 
 	return CardCount;
@@ -201,7 +202,7 @@ int Arena::ScorePoints(Player& player)
 	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
-		if (card->Type = Wonder) CardCount++;
+		if (card->Type == Wonder) CardCount++;
 	}
 
 	return CardCount;
@@ -425,5 +426,26 @@ int SailorsGuild::ScorePoints(Player& player)
 		if (card->Type == Guild) CardCount++;
 	}
 
+	return CardCount;
+}
+
+BuildersGuild::BuildersGuild()
+{
+	CardCost.ModifyResource(Stone, 2);
+	CardCost.ModifyResource(Clay, 2);
+	CardCost.ModifyResource(Glass, 1);
+}
+
+std::string BuildersGuild::CardInfo()
+{
+	return "This card gives you 1 Victory point for every Wonder stage you and your neighbours completed.";
+}
+
+int BuildersGuild::ScorePoints(Player& player)
+{
+	int CardCount = 0;
+	for (auto card : player.PlayedCards) if (card->Type == Wonder) CardCount++;
+	for (auto card : player.LeftNeighbour->PlayedCards) if (card->Type == Wonder) CardCount++;
+	for (auto card : player.RightNeighbour->PlayedCards) if (card->Type == Wonder) CardCount++;
 	return CardCount;
 }

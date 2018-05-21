@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Player.h"
 #include "Wonders.hpp"
 #include <array>

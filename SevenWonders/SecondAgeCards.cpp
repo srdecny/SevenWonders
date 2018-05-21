@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "SecondAgeCards.h"
 #include "Player.h"
 

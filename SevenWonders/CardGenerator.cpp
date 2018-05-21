@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "CardGenerator.hpp"
 #include <ctime>
 
@@ -75,6 +76,61 @@
 	 CardPool.push_back(std::make_shared<Laboratory>());
 	 CardPool.push_back(std::make_shared<School>());
 	 CardPool.push_back(std::make_shared<Infirmary>());
+
+	 return GenerateHands(CardPool, Players);
+
+ }
+
+ std::vector<std::vector<std::shared_ptr<BaseCard>>> Generator::GenerateThirdAgeCards(int Players)
+ {
+	 std::vector<std::shared_ptr<BaseCard>> GuildPool;
+
+	 GuildPool.push_back(std::make_shared<PhilosophersGuild>());
+	 GuildPool.push_back(std::make_shared<JudgesGuild>());
+	 GuildPool.push_back(std::make_shared<SpiesGuild>());
+	 GuildPool.push_back(std::make_shared<WorkersGuild>());
+	 GuildPool.push_back(std::make_shared<ArchitectsGuild>());
+	 GuildPool.push_back(std::make_shared<CraftmansGuild>());
+	 GuildPool.push_back(std::make_shared<MerchantsGuild>());
+
+	 GuildPool.push_back(std::make_shared<GamersGuild>());
+	 GuildPool.push_back(std::make_shared<WarlordsGuild>());
+	 GuildPool.push_back(std::make_shared<ResearchersGuild>());
+	 GuildPool.push_back(std::make_shared<SailorsGuild>());
+	 GuildPool.push_back(std::make_shared<BuildersGuild>());
+
+	 std::srand(std::time(0));
+	 std::random_shuffle(GuildPool.begin(), GuildPool.end());
+
+	 std::vector<std::shared_ptr<BaseCard>> CardPool;
+
+	 for (int i = 0; i < Players + 2; i++)
+	 {
+		 CardPool.push_back(GuildPool.back());
+		 GuildPool.pop_back();
+	 }
+
+	 CardPool.push_back(std::make_shared<Circus>());
+	 CardPool.push_back(std::make_shared<Fortress>());
+	 CardPool.push_back(std::make_shared<Armory>());
+	 CardPool.push_back(std::make_shared<Trebuchet>());
+
+	 CardPool.push_back(std::make_shared<Palace>());
+	 CardPool.push_back(std::make_shared<TownHall>());
+	 CardPool.push_back(std::make_shared<Senate>());
+	 CardPool.push_back(std::make_shared<Pantheon>());
+	 CardPool.push_back(std::make_shared<Gardens>());
+
+	 CardPool.push_back(std::make_shared<TradingCompany>());
+	 CardPool.push_back(std::make_shared<Lighthouse>());
+	 CardPool.push_back(std::make_shared<Harbor>());
+	 CardPool.push_back(std::make_shared<Arena>());
+
+	 CardPool.push_back(std::make_shared<StudyHall>());
+	 CardPool.push_back(std::make_shared<Academy>());
+	 CardPool.push_back(std::make_shared<University>());
+	 CardPool.push_back(std::make_shared<Observatory>());
+	 CardPool.push_back(std::make_shared<Lodge>());
 
 	 return GenerateHands(CardPool, Players);
 
