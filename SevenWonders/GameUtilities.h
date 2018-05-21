@@ -8,6 +8,7 @@ enum ScienceSymbols {Cog, Tableau, Compass};
 
 static std::map<Resources, std::string> ResourcesName = { {Wood, "Wood"}, {Clay, "Clay"}, { Iron, "Iron" }, { Stone, "Stone" }, { Glass, "Glass" }, { Cloth, "Cloth" }, { Paper, "Paper"} };
 static std::map<ScienceSymbols, std::string> SymbolsName = { {Cog, "Cog"}, {Tableau, "Tableau"}, {Compass, "Compass"} };
+static std::map<CardTypes, std::string> CardTypesName = { {CommonResource, "CommonResource"},{ RareResource, "RareResource" },{ Military, "Military" },{ Merchant, "Merchant" },{ Science, "Science" },{ Government, "Government" },{ Guild, "Guild" },{ Wonder, "Wonder" } };
 
 class ResourceVector
 {

@@ -69,6 +69,7 @@ StoneWall::StoneWall()
 	Power = 2;
 	CardCost.ModifyResource(Stone, 3);
 	PlayerCount = { 3, 7 };
+	ID = 201;
 }
 
 Archery::Archery()
@@ -97,6 +98,7 @@ TrainingGrounds::TrainingGrounds()
 	CardCost.ModifyResource(Iron, 2);
 	CardCost.ModifyResource(Wood, 1);
 	PlayerCount = { 4, 6, 7};
+	ID = 200;
 }
 
 // GOVERNMENT
@@ -108,6 +110,7 @@ Statue::Statue()
 	CardCost.ModifyResource(Wood, 1);
 	PrerequisiteCards.push_back(113); // Theatre
 	PlayerCount = { 3, 7 };
+	ID = 207;
 }
 
 Aqueduct::Aqueduct()
@@ -126,6 +129,7 @@ Temple::Temple()
 	CardCost.ModifyResource(Glass, 1);
 	PrerequisiteCards.push_back(111); // Shrine
 	PlayerCount = { 3, 6 };
+	ID = 206;
 }
 
 CourtHouse::CourtHouse()
@@ -144,6 +148,7 @@ Caravanserai::Caravanserai()
 	CardCost.ModifyResource(Wood, 2);
 	PrerequisiteCards.push_back(122); // Marketplace
 	PlayerCount = { 3, 5, 6 };
+	ID = 208;
 }
 
 void Caravanserai::CardEffect(Player& player)
@@ -171,6 +176,7 @@ void Tribunal::CardEffect(Player& player)
 	MultipleResourceBuilding DummyBuilding;
 	DummyBuilding.ProducedResources = { Glass, Cloth, Paper };
 	DummyBuilding.CardEffect(player);
+	ID = 209;
 
 }
 
@@ -250,6 +256,7 @@ Library::Library()
 	CardCost.ModifyResource(Cloth, 1);
 	PrerequisiteCards.push_back(100); // Scriber Shop
 	PlayerCount = { 3, 6 };
+	ID = 205;
 }
 
 Laboratory::Laboratory()
@@ -259,6 +266,7 @@ Laboratory::Laboratory()
 	CardCost.ModifyResource(Paper, 1);
 	PrerequisiteCards.push_back(102); // Workshop
 	PlayerCount = { 3, 5 };
+	ID = 203;
 }
 
 School::School()
@@ -267,6 +275,7 @@ School::School()
 	CardCost.ModifyResource(Wood, 1);
 	CardCost.ModifyResource(Paper, 1);
 	PlayerCount = { 3, 7 };
+	ID = 211;
 }
 
 Infirmary::Infirmary()
@@ -276,4 +285,5 @@ Infirmary::Infirmary()
 	CardCost.ModifyResource(Glass, 1);
 	PrerequisiteCards.push_back(101); // Aphotecary
 	PlayerCount = { 3, 4 };
+	ID = 210;
 }

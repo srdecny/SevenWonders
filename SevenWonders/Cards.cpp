@@ -37,6 +37,7 @@ bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 void BaseCard::Play(Player& player)
 {
 	CardEffect(player);
+	player.Gold -= GoldCost;
     player.PlayedCards.push_back(shared_from_this());
 }
 
@@ -72,8 +73,6 @@ std::string SingleResourceBuilding::CardInfo()
 
 void MultipleResourceBuilding::CardEffect(Player& player)
 {
-	player.Gold -= GoldCost;
-
 	// for every avaliable ResourceVector, make new vectors based on the avaliable resources
 	// so only one resource from AvaliableResource is avaliable at a given time
 	std::vector<ResourceVector> NewResources;
@@ -146,4 +145,24 @@ int WonderBuilding::ScorePoints(Player& player)
 void DiscardedCard::CardEffect(Player& player)
 {
 	player.Gold += 3;
+}
+
+int GuildBuilding::ScorePoints(Player& player)
+{
+	int CardCount = 0;
+	for (auto card : player.LeftNeighbour->PlayedCards)
+	{
+		if (card->Type == ScoringType) CardCount++;
+	}
+	for (auto card : player.RightNeighbour->PlayedCards)
+	{
+		if (card->Type == ScoringType) CardCount++;
+	}
+
+	return CardCount * PointMultiplier;
+}
+
+std::string GuildBuilding::CardInfo()
+{
+	return "This card scores " + std::to_string(PointMultiplier) + " points for every " + CardTypesName[ScoringType] + " card your neighbours have.";
 }

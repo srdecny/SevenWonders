@@ -152,6 +152,7 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FirstAgeCards.h" />
     <ClInclude Include="GameUtilities.h" />
+    <ClInclude Include="ThirdAgeCards.h" />
     <ClInclude Include="SecondAgeCards.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="stdafx.h" />
@@ -173,6 +174,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ThirdAgeCards.cpp" />
     <ClCompile Include="Wonders.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

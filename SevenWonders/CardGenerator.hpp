@@ -1,6 +1,7 @@
 #pragma once
 #include "FirstAgeCards.h"
 #include "SecondAgeCards.h"
+#include "ThirdAgeCards.h"
 
 class Generator
 {

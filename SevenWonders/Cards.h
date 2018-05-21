@@ -102,6 +102,16 @@ public:
 	WonderBuilding() { Type = Wonder; };
 };
 
+class GuildBuilding : public BaseCard
+{
+public:
+	virtual int ScorePoints(Player& player) override;
+	virtual std::string CardInfo() override;
+	GuildBuilding() { Type = Guild; }
+	CardTypes ScoringType;
+	int PointMultiplier;
+};
+
  class DiscardedCard : public BaseCard
 {
 public:
