@@ -15,10 +15,10 @@ public:
     BaseWonder();
     ~BaseWonder();
     virtual void InitialResource(Player& player) = 0;
-    int WonderLevel;
 	int CurrentLevel = 0;
-    std::vector<BaseCard> WonderBuildings;
+    std::vector<std::shared_ptr<BaseCard>> WonderBuildings;
 	std::shared_ptr<BaseCard> CurrentBuilding;
+	std::string WonderName;
 
 	void GetNextWonderBuilding();
 };
@@ -41,18 +41,21 @@ class BaseFirstStage : public WonderBuilding
 {
 public:
 	BaseFirstStage();
+	std::string CardInfo() override;
 };
 
 class BaseThirdStage : public WonderBuilding
 {
 public:
 	BaseThirdStage();
+	std::string CardInfo() override;
 };
 
 class GizahSecondStage : public WonderBuilding
 {
 public:
 	GizahSecondStage();
+	std::string CardInfo() override;
 };
 
 class RhodosSecondStage : public WonderBuilding
@@ -60,4 +63,5 @@ class RhodosSecondStage : public WonderBuilding
 public:
 	RhodosSecondStage();
 	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
 };

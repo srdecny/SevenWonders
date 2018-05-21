@@ -3,7 +3,6 @@
 
 BaseWonder::BaseWonder()
 {
-	GetNextWonderBuilding();
 }
 BaseWonder::~BaseWonder()
 {
@@ -12,16 +11,27 @@ BaseWonder::~BaseWonder()
 
 void BaseWonder::GetNextWonderBuilding()
 {
-	if (WonderLevel == WonderBuildings.capacity()) CurrentBuilding = nullptr;
-	else CurrentBuilding = std::make_shared<BaseCard>(WonderBuildings[WonderLevel]);
+	if (CurrentLevel >= (int)WonderBuildings.capacity()) CurrentBuilding = nullptr;
+	else
+	{
+		CurrentLevel++;
+		CurrentBuilding = WonderBuildings[CurrentLevel];
+	}
+
 }
 
 Gizah::Gizah()
 {
-	WonderLevel = 3;
-	WonderBuildings = { BaseFirstStage(), GizahSecondStage(), BaseThirdStage() };
-	WonderBuildings[0].CardCost.ModifyResource(Stone, 2);
-	WonderBuildings[2].CardCost.ModifyResource(Stone, 4);
+	WonderBuildings.push_back(std::make_shared<BaseFirstStage>());
+	WonderBuildings.push_back(std::make_shared<GizahSecondStage>());
+	WonderBuildings.push_back(std::make_shared<BaseThirdStage>());
+
+	WonderBuildings[0]->CardCost.ModifyResource(Stone, 2);
+	WonderBuildings[2]->CardCost.ModifyResource(Stone, 4);
+
+	CurrentBuilding = WonderBuildings[0];
+
+	WonderName = "Pyramides of Gizah";
 }
 
 void Gizah::InitialResource(Player &player)
@@ -32,10 +42,16 @@ void Gizah::InitialResource(Player &player)
 
 Rhodos::Rhodos()
 {
-	WonderLevel = 3;
-	WonderBuildings = { BaseFirstStage(), RhodosSecondStage(), BaseThirdStage() };
-	WonderBuildings[0].CardCost.ModifyResource(Wood, 2);
-	WonderBuildings[2].CardCost.ModifyResource(Iron, 4);
+	WonderBuildings.push_back(std::make_shared<BaseFirstStage>());
+	WonderBuildings.push_back(std::make_shared<RhodosSecondStage>());
+	WonderBuildings.push_back(std::make_shared<BaseThirdStage>());
+
+	WonderBuildings[0]->CardCost.ModifyResource(Wood, 2);
+	WonderBuildings[2]->CardCost.ModifyResource(Iron, 4);
+
+	CurrentBuilding = WonderBuildings[0];
+
+	WonderName = "Colossus of Rhodos";
 }
 
 void Rhodos::InitialResource(Player& player)
@@ -49,9 +65,19 @@ BaseFirstStage::BaseFirstStage()
 	Points = 3;
 }
 
+std::string BaseFirstStage::CardInfo()
+{
+	return "This Wonder stage gives you " + std::to_string(Points) + " Victory points.";
+}
+
 BaseThirdStage::BaseThirdStage()
 {
 	Points = 7;
+}
+
+std::string BaseThirdStage::CardInfo()
+{
+	return "This Wonder stage gives you " + std::to_string(Points) + " Victory points.";
 }
 
 
@@ -61,6 +87,12 @@ GizahSecondStage::GizahSecondStage()
 	Points = 5;
 }
 
+std::string GizahSecondStage::CardInfo()
+{
+	return "This Wonder stage gives you 5 Victory points.";
+}
+
+
 RhodosSecondStage::RhodosSecondStage()
 {
 	CardCost.ModifyResource(Clay, 3);
@@ -69,4 +101,9 @@ RhodosSecondStage::RhodosSecondStage()
 void RhodosSecondStage::CardEffect(Player& player)
 {
 	player.MilitaryPoints += 2;
+}
+
+std::string RhodosSecondStage::CardInfo()
+{
+	return "This Wonder stage gives you 2 Military points.";
 }

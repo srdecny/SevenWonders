@@ -18,6 +18,9 @@ public:
 
 	ResourceVector CardCost;
 
+	std::string GetCardInfoAndCost();
+	virtual std::string CardInfo() { return "Card info not implemented!"; };
+
 	std::string CardName();
 	std::vector<int> PlayerCount;
 	CardTypes Type;
@@ -29,22 +32,13 @@ public:
 	bool CanPlayerAffordThisForFree(Player& player);
 };
 
-/*
-class CardThatCostGold : public BaseCard
-{
-public:
-	//int GoldCost;
-	bool CanPlayerAffordThisForFree(Player& player);
-	void Play(Player&) override;
-};
-*/
-
 class SingleResourceBuilding : public BaseCard
 {
 public:
 	Resources ProducedResource;
 	int Amount;
 	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
 };
 
 class MilitaryBuilding : public BaseCard
@@ -53,6 +47,8 @@ public:
 	int Power;
 	void CardEffect(Player& player) override;
 	MilitaryBuilding() { Type = Military; };
+	std::string CardInfo() override;
+
 };
 
 class GovernmentBuilding : public BaseCard
@@ -61,6 +57,8 @@ public:
 	int Points;
 	int ScorePoints(Player& player) override;
 	GovernmentBuilding() { Type = Government; };
+	std::string CardInfo() override;
+
 };
 
 class MultipleResourceBuilding : public BaseCard
@@ -69,6 +67,8 @@ public:
 	void CardEffect(Player& player) override; // will also make player pay gold
 	std::vector<Resources> ProducedResources;
 	MultipleResourceBuilding() { Type = CommonResource; };
+	std::string CardInfo() override;
+
 };
 
 class ScienceBuilding : public BaseCard
@@ -78,6 +78,8 @@ public:
 	ScienceSymbols Symbol;
 	void CardEffect(Player& player) override;
 	ScienceBuilding() { Type = Science; };
+	std::string CardInfo() override;
+
 };
 
 class MerchantBuilding : public BaseCard
@@ -86,6 +88,7 @@ public:
 	CardTypes Type = Merchant;
 	virtual void CardEffect(Player& player) override { return; };
 	MerchantBuilding() { Type = Merchant; };
+
 };
 
 class WonderBuilding : public BaseCard
@@ -93,6 +96,7 @@ class WonderBuilding : public BaseCard
 public:
 	virtual void CardEffect(Player& player) override { return; };
 	int ScorePoints(Player& player) override;
+	std::string CardInfo() override { return "Not implemented!"; };
 	int Points;
 	CardTypes Type = Wonder;
 	WonderBuilding() { Type = Wonder; };

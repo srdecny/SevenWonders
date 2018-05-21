@@ -1,6 +1,7 @@
 #include "Cards.h"
 #include "Player.h"
 #include <iostream>
+#include <sstream>
 
 
 BaseCard::BaseCard()
@@ -33,22 +34,6 @@ bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 	return false;
 }
 
-/*
-bool CardThatCostGold::CanPlayerAffordThisForFree(Player& player)
-{
-	
-	if (player.Gold < GoldCost) return false;
-	return BaseCard::CanPlayerAffordThisForFree(player); // gotta have gold AND resources
-	
-}
-
-void CardThatCostGold::Play(Player& player)
-{
-	player.Gold -= GoldCost;
-	CardEffect(player);
-}
-*/
-
 void BaseCard::Play(Player& player)
 {
 	CardEffect(player);
@@ -60,6 +45,14 @@ void BaseCard::CardEffect(Player& player)
 
 }
 
+std::string BaseCard::GetCardInfoAndCost()
+{
+	std::stringstream info;
+	info << CardInfo() << std::endl;
+	info << "Card cost: " << CardCost.PrintResourceVector() << std::endl;
+	return info.str();
+}
+
 std::string BaseCard::CardName()
 {
 	std::string result = typeid(*this).name(); // this is almost certainly wrong in some way
@@ -69,6 +62,11 @@ std::string BaseCard::CardName()
 void SingleResourceBuilding::CardEffect(Player& player)
 {
 	player.ModifyTradableResources(ProducedResource, Amount);
+}
+
+std::string SingleResourceBuilding::CardInfo()
+{
+	 return "This building produces a single resource: " + ResourcesName[ProducedResource];
 }
 
 void MultipleResourceBuilding::CardEffect(Player& player)
@@ -97,9 +95,27 @@ void MultipleResourceBuilding::CardEffect(Player& player)
 	}
 }
 
+std::string MultipleResourceBuilding::CardInfo()
+{
+	std::stringstream info;
+	info << "This building produces multiple resources. Only one resource is avaliable at given time." << std::endl;
+	info << "Produced resources: ";
+	for (auto resource : ProducedResources)
+	{
+		info << ResourcesName[resource] << " ";
+	}
+	info << std::endl << "This building also costs " << std::to_string(GoldCost) << " Gold to build." << std::endl;
+	return info.str();
+}
+
 void MilitaryBuilding::CardEffect(Player& player)
 {
 	player.MilitaryPoints += Power;
+}
+
+std::string MilitaryBuilding::CardInfo()
+{
+	return "This building provides " + std::to_string(Power) + " Military points.";
 }
 
 int GovernmentBuilding::ScorePoints(Player& player)
@@ -107,9 +123,19 @@ int GovernmentBuilding::ScorePoints(Player& player)
 	return Points;
 }
 
+std::string GovernmentBuilding::CardInfo()
+{
+	return "This card gives you " + std::to_string(Points) + " Victory points.";
+}
+
 void ScienceBuilding::CardEffect(Player& player)
 {
 	player.ModifyScienceVectors(Symbol, 1);
+}
+
+std::string ScienceBuilding::CardInfo()
+{
+	return "This building gives you 1 " + SymbolsName[Symbol] + " Science symbol.";
 }
 
 int WonderBuilding::ScorePoints(Player& player)

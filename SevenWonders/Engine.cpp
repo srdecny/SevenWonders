@@ -123,7 +123,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		}
 		else
 		{
-			stream << "You can't afford the next wonder stage." << std::endl;
+			stream << "You can't afford the next wonder stage. Stage cost:" << WonderBuilding->CardCost.PrintResourceVector() << std::endl;
 		}
 	
 	}
@@ -132,7 +132,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	// REPL loop
 	while (true)
 	{
-		stream << "Avaliable commands: play X; discard X; wonder X; stats left/right/me; exit. X is index of the card." << std::endl;
+		stream << "Avaliable commands: play X; discard X; wonder X; info X; stats left/right/me; exit. X is index of the card." << std::endl;
 		std::string command;
 		std::getline(std::cin, command);
 
@@ -152,12 +152,13 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		else if (command.substr(0, 7) == "discard" && command.length() == 9)
 		{
 			int CardIndex = command[8] - '0'; // convert the index to int
-			if (CardIndex >= 0 && CardIndex < (int)cards.capacity()) // can discard unaffordable cards
+			if (CardIndex >= 0 && CardIndex < (int)cards.size()) // can discard unaffordable cards
 			{
 				auto discard = std::make_shared<DiscardedCard>();
 				ProcessCardPurchase(discard, cards[CardIndex], player, cards);
 				break;
 			}
+			else stream << "Invalid index!" << std::endl;
 		}
 		else if (command.substr(0, 6) == "wonder" && command.length() == 8)
 		{
@@ -165,7 +166,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 			else
 			{
 				int CardIndex = command[7] - '0'; // convert the index to int
-				if (CardIndex >= 0 && CardIndex < (int)cards.capacity()) // can discard unaffordable cards
+				if (CardIndex >= 0 && CardIndex < (int)cards.size()) // can discard unaffordable cards
 				{
 					ProcessCardPurchase(player.Wonder->CurrentBuilding, cards[CardIndex], player, cards);
 					player.Wonder->GetNextWonderBuilding();
@@ -188,6 +189,16 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 				stream << "Your stats: " << std::endl; PrintPlayerStats(std::cout, player);
 			}
 			else stream << "Invalid command!" << std::endl;
+
+		}
+		else if (command.substr(0, 4) == "info" && command.length() == 6) 
+		{
+			int CardIndex = command[5] - '0'; // convert the index to int
+			if (CardIndex >= 0 && CardIndex < (int)cards.size())
+			{
+				stream << cards[CardIndex]->GetCardInfoAndCost();
+			}
+			else stream << "Invalid index!" << std::endl;
 
 		}
 		else if (command.substr(0, 4) == "exit")
@@ -332,7 +343,7 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 {
 
-	stream << "Avaliable Gold: " << std::to_string(player.Gold) << "; Military Points: " << std::to_string(player.MilitaryPoints) << std::endl;
+	stream << "Avaliable Gold: " << std::to_string(player.Gold) << "; Military Points: " << std::to_string(player.MilitaryPoints) << "Wonder: " << player.Wonder->WonderName << std::endl;
 	for (ResourceVector& vector : player.TradableResources)
 	{
 		stream << "Avaliable resources: " << vector.PrintResourceVector() << std::endl;
@@ -342,6 +353,8 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 	{
 		stream << "Science symbols: " << vector.PrintScienceVector() << std::endl;
 	}
+
+	stream << std::endl;
 
 }
 
