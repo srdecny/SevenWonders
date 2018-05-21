@@ -44,24 +44,28 @@ class Pub : public MerchantBuilding
 public:
 	Pub();
 	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
 };
 class EasternMarket : public MerchantBuilding
 {
 public: 
 	EasternMarket();
 	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
 };
 class WesternMarket : public MerchantBuilding
 {
 public:
 	WesternMarket();
 	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
 };
 class Marketplace : public MerchantBuilding
 {
 public:
 	Marketplace();
 	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
 };
 
 

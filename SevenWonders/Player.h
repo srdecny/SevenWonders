@@ -15,7 +15,7 @@ public:
 	std::vector<ResourceVector> TradableResources; // todo TradableResources
 	std::vector<ScienceVector> ScienceVectors;
     
-    // shared_ptr because one card can appear multiple times in the game with higher player count
+    // shared_ptr because one card can appear multiple times in games with higher player count
     // and we want to have only one instance of each card class for lower memory usage
     std::vector<std::shared_ptr<BaseCard>> PlayedCards;
 	void ModifyTradableResources(Resources resource, int change);
@@ -26,8 +26,8 @@ public:
 	int CommonResourceCostRight = 2;
 	int RareResourceCost = 2;
 
-	int MilitaryLoses;
-	int MilitaryWins;
+	int MilitaryLoses = 0;
+	int MilitaryWins = 0;
 
 	int MilitaryPoints = 0;
 

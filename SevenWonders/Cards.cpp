@@ -50,6 +50,7 @@ std::string BaseCard::GetCardInfoAndCost()
 	std::stringstream info;
 	info << CardInfo() << std::endl;
 	info << "Card cost: " << CardCost.PrintResourceVector() << std::endl;
+	if (GoldCost > 0) info << "This card also costs " << std::to_string(GoldCost) << " Gold." << std::endl;
 	return info.str();
 }
 
@@ -104,7 +105,6 @@ std::string MultipleResourceBuilding::CardInfo()
 	{
 		info << ResourcesName[resource] << " ";
 	}
-	info << std::endl << "This building also costs " << std::to_string(GoldCost) << " Gold to build." << std::endl;
 	return info.str();
 }
 

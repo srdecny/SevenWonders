@@ -139,7 +139,7 @@ Shrine::Shrine()
 {
 	Points = 2;
 	PlayerCount = { 3, 5 };
-
+	ID = 111;
 }
 
 Spa::Spa()
@@ -147,7 +147,7 @@ Spa::Spa()
 	CardCost.ModifyResource(Stone, 1);
 	Points = 3;
 	PlayerCount = { 3, 7 };
-
+	ID = 112;
 }
 
 PawnShop::PawnShop()
@@ -161,7 +161,7 @@ Theatre::Theatre()
 {
 	Points = 2;
 	PlayerCount = { 3, 6 };
-
+	ID = 113;
 }
 
 // MERCHANT
@@ -177,9 +177,15 @@ void Pub::CardEffect(Player& player)
 	player.Gold += 5;
 }
 
+std::string Pub::CardInfo()
+{
+	return "This card gives you 5 Gold.";
+}
+
 WesternMarket::WesternMarket()
 {
 	PlayerCount = { 3, 7 };
+	ID = 120;
 
 }
 
@@ -188,10 +194,15 @@ void WesternMarket::CardEffect(Player& player)
 	player.CommonResourceCostRight = 1;
 }
 
+std::string WesternMarket::CardInfo()
+{
+	return "This card allows you to buy Common resources from your left neighbour for 1 Gold.";
+}
+
 EasternMarket::EasternMarket()
 {
 	PlayerCount = { 3, 7 };
-
+	ID = 121;
 }
 
 void EasternMarket::CardEffect(Player& player)
@@ -199,15 +210,25 @@ void EasternMarket::CardEffect(Player& player)
 	player.CommonResourceCostLeft = 1;
 }
 
+std::string EasternMarket::CardInfo()
+{
+	return "This card allows you to buy Common resources from your right neighbour for 1 Gold.";
+}
+
 Marketplace::Marketplace()
 {
 	PlayerCount = { 3, 6 };
-
+	ID = 122;
 }
 
 void Marketplace::CardEffect(Player& player)
 {
 	player.RareResourceCost = 1;
+}
+
+std::string Marketplace::CardInfo()
+{
+	return "This card allows you to buy Rare resources from both neighbours for 1 Gold.";
 }
 
 // SCIENCE
@@ -217,7 +238,7 @@ ScriberShop::ScriberShop()
 	CardCost.ModifyResource(Paper, 1);
 	Symbol = Cog;
 	PlayerCount = { 3, 4 };
-
+	ID = 100;
 }
 
 Aphotecary::Aphotecary()
@@ -225,6 +246,7 @@ Aphotecary::Aphotecary()
 	CardCost.ModifyResource(Cloth, 1);
 	Symbol = Compass;
 	PlayerCount = { 3, 5 };
+	ID = 101;
 
 }
 
@@ -233,5 +255,6 @@ Workshop::Workshop()
 	CardCost.ModifyResource(Glass, 1);
 	Symbol = Tableau;
 	PlayerCount = { 3, 7 };
+	ID = 102;
 }
 
