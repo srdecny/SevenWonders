@@ -110,7 +110,7 @@ std::string TradingCompany::CardInfo()
 
 int TradingCompany::ScorePoints(Player& player)
 {
-	int CardCount;
+	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
 		if (card->Type = RareResource) CardCount++;
@@ -139,7 +139,7 @@ std::string Lighthouse::CardInfo()
 
 int Lighthouse::ScorePoints(Player& player)
 {
-	int CardCount;
+	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
 		if (card->Type = Merchant) CardCount++;
@@ -169,7 +169,7 @@ std::string Harbor::CardInfo()
 
 int Harbor::ScorePoints(Player& player)
 {
-	int CardCount;
+	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
 		if (card->Type = CommonResource) CardCount++;
@@ -198,7 +198,7 @@ std::string Arena::CardInfo()
 
 int Arena::ScorePoints(Player& player)
 {
-	int CardCount;
+	int CardCount = 0;
 	for (auto card : player.PlayedCards)
 	{
 		if (card->Type = Wonder) CardCount++;
@@ -214,7 +214,7 @@ void Arena::CardEffect(Player& player)
 
 // SCIENCE
 
-StudyHall::StudyHall()
+Observatory::Observatory()
 {
 	CardCost.ModifyResource(Iron, 2);
 	CardCost.ModifyResource(Glass, 1);
@@ -357,7 +357,7 @@ WarlordsGuild::WarlordsGuild()
 	CardCost.ModifyResource(Cloth, 1);
 }
 
-std::string WarlordsGuild()
+std::string WarlordsGuild::CardInfo()
 {
 	return "This card gives you 1 Victory point for each time your neighbours were defeated in Military combat.";
 }
@@ -365,7 +365,7 @@ std::string WarlordsGuild()
 int WarlordsGuild::ScorePoints(Player& player)
 {
 	// the losses are negative ints
-	return -1 * (player.LeftNeighbour->MilitaryLoses + player.RightNeighbour->MilitaryLoses)
+	return -1 * (player.LeftNeighbour->MilitaryLoses + player.RightNeighbour->MilitaryLoses);
 }
 
 ResearchersGuild::ResearchersGuild()
@@ -410,7 +410,7 @@ SailorsGuild::SailorsGuild()
 	CardCost.ModifyResource(Paper, 1);
 }
 
-std::string SailorsGuild()
+std::string SailorsGuild::CardInfo()
 {
 	return "This card gives you 1 point for every Common Resource, Rare Resource and Guild cards you have.";
 }
