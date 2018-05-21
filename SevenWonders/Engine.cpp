@@ -381,7 +381,7 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 
 }
 
-void GameEngine::ProcessSingleTurn()
+void GameEngine::ProcessSingleTurn(int CardRotation)
 {
 	// first, we deal with the live player, which is always the first one
 	PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
@@ -403,7 +403,8 @@ void GameEngine::ProcessSingleTurn()
 		PlayedCard.first->Play(*PlayedCard.second);
 	}
 
-	std::rotate(PlayersHands.begin(), PlayersHands.begin() + 1, PlayersHands.end()); // pass the cards clockwise
+	if (CardRotation == 1) std::rotate(PlayersHands.begin(), PlayersHands.begin() + 1, PlayersHands.end()); // pass the cards clockwise
+	else std::rotate(PlayersHands.begin(), PlayersHands.end(), PlayersHands.end()); // counterclockwise
 
 	GoldTransactions.clear();
 	PlayedCardsQueue.clear();
@@ -453,9 +454,17 @@ void GameEngine::PlayTheGame()
 	
 	for (int turn = 0; turn < 6; turn++)
 	{
-		ProcessSingleTurn();
+		ProcessSingleTurn(1);
 	}
 	CalculateMilitaryFights(1);
+
+	PlayersHands = CardGenerator.GenerateSecondAgeCards(PlayerCount);
+	for (int turn = 0; turn < 6; turn++)
+	{
+		ProcessSingleTurn(0);
+	}
+	CalculateMilitaryFights(3);
+
 	PrintPlayerStats(std::cout, Players[0]);
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "SecondAgeCards.h"
+#include "Player.h"
 
 // RESOURCES
 
@@ -185,8 +186,23 @@ Vineyard::Vineyard()
 
 void Vineyard::CardEffect(Player& player)
 {
-	int ResourceCards = 0;
+	int CardCount = 0;
+	for (auto card : player.PlayedCards)
+	{
+		if (card->Type == CommonResource) CardCount++;
+	}
 
+	for (auto card : player.LeftNeighbour->PlayedCards)
+	{
+		if (card->Type == CommonResource) CardCount++;
+	}
+
+	for (auto card : player.RightNeighbour->PlayedCards)
+	{
+		if (card->Type == CommonResource) CardCount++;
+	}
+
+	player.Gold += CardCount;
 }
 
 std::string Vineyard::CardInfo()
@@ -201,10 +217,63 @@ Bazaar::Bazaar()
 
 void Bazaar::CardEffect(Player& player)
 {
+	int CardCount = 0;
+	for (auto card : player.PlayedCards)
+	{
+		if (card->Type == RareResource) CardCount++;
+	}
 
+	for (auto card : player.LeftNeighbour->PlayedCards)
+	{
+		if (card->Type == RareResource) CardCount++;
+	}
+
+	for (auto card : player.RightNeighbour->PlayedCards)
+	{
+		if (card->Type == RareResource) CardCount++;
+	}
+
+	player.Gold += CardCount * 2;
 }
 
 std::string Bazaar::CardInfo()
 {
 	return "This card gives you 2 Gold for every single Rare resource card you and your neighbours have.";
+}
+
+// SCIENCE
+
+Library::Library()
+{
+	Symbol = Tableau;
+	CardCost.ModifyResource(Stone, 2);
+	CardCost.ModifyResource(Cloth, 1);
+	PrerequisiteCards.push_back(100); // Scriber Shop
+	PlayerCount = { 3, 6 };
+}
+
+Laboratory::Laboratory()
+{
+	Symbol = Cog;
+	CardCost.ModifyResource(Clay, 2);
+	CardCost.ModifyResource(Paper, 1);
+	PrerequisiteCards.push_back(102); // Workshop
+	PlayerCount = { 3, 5 };
+}
+
+School::School()
+{
+	Symbol = Tableau;
+	CardCost.ModifyResource(Wood, 1);
+	CardCost.ModifyResource(Paper, 1);
+	PlayerCount = { 3, 7 };
+}
+
+Infirmary::Infirmary()
+{
+	Symbol = Compass;
+	CardCost.ModifyResource(Iron, 2);
+	CardCost.ModifyResource(Glass, 1);
+	PrerequisiteCards.push_back(101); // Aphotecary
+	PlayerCount = { 3, 4 };
 }

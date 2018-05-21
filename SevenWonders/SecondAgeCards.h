@@ -60,3 +60,11 @@ public:
 	void CardEffect(Player& player) override;
 	std::string CardInfo() override;
 };
+
+
+// SCIENCE
+
+class Library : public ScienceBuilding { public: Library(); };
+class Laboratory : public ScienceBuilding { public: Laboratory(); };
+class School : public ScienceBuilding { public: School(); };
+class Infirmary : public ScienceBuilding { public: Infirmary(); };

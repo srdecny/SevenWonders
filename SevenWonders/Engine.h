@@ -23,7 +23,8 @@ public:
 	void InitializeTheGame();
 	int ScorePlayerPoints(Player& player);
 
-	void ProcessSingleTurn();
+	// CardRotation  1 -> clockwise, 0 -> counterclockwise
+	void ProcessSingleTurn(int CardRotation);
 
 	void PresentCardsToPlayer(std::ostream& stream, Player& player, std::vector<std::shared_ptr<BaseCard>>& cards);
 	void PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards);
