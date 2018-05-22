@@ -11,14 +11,16 @@
 class GameEngine
 {
 public:
-	GameEngine(int PlayerCount);
+	GameEngine(int PlayerCount, int RealPlayers);
 	~GameEngine();
 
 	void PlayTheGame();
 
 	int PlayerCount;
+	int RealPlayers;
 	std::vector<Player> Players;
 	std::vector<std::vector<std::shared_ptr<BaseCard>>> PlayersHands;
+	std::vector<int> RealPlayersIndexes;
 
 	void InitializeTheGame();
 	int ScorePlayerPoints(Player& player);

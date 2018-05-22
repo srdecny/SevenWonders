@@ -9,7 +9,7 @@ using namespace std;
 int main()
 {
 	
-	GameEngine engine(3);
+	GameEngine engine(3, 0);
 	engine.PlayTheGame();
 
 	getchar();

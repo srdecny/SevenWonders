@@ -6,9 +6,10 @@
 #include <ctime>
 #include <algorithm>
 
-GameEngine::GameEngine(int count)
+GameEngine::GameEngine(int count, int real)
 {
 	PlayerCount = count;
+	RealPlayers = real;
 }
 
 GameEngine::~GameEngine()
@@ -18,10 +19,25 @@ GameEngine::~GameEngine()
 void GameEngine::InitializeTheGame()
 {
 	if (PlayerCount <= 2 || PlayerCount > 7) throw std::invalid_argument("Invalid player count!");
+	if (RealPlayers < 0 || RealPlayers > PlayerCount) throw std::invalid_argument("Invalid real player count!");
 
+
+	std::vector<int> PlayerIndexes;
 	for (int i = 0; i < PlayerCount; i++)
 	{
 		Players.push_back(Player());
+		PlayerIndexes.push_back(i);
+	}
+
+
+	// randomly determine the positions of real players
+	std::srand(std::time(0));
+	std::random_shuffle(PlayerIndexes.begin(), PlayerIndexes.end());
+
+	for (int Real = 0; Real < RealPlayers; Real++)
+	{
+		RealPlayersIndexes.push_back(PlayerIndexes.back());
+		PlayerIndexes.pop_back();
 	}
 
     // assign neighbours
@@ -369,6 +385,12 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 		stream << "Science symbols: " << vector.PrintScienceVector() << std::endl;
 	}
 
+	stream << "Played cards: ";
+	for (auto& card : player.PlayedCards)
+	{
+		stream << " " << card->CardName();
+	}
+	stream << std::endl;
 	stream << "Scored points: " << std::to_string(ScorePlayerPoints(player)) << std::endl;
 	stream << std::endl;
 
@@ -376,13 +398,17 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 
 void GameEngine::ProcessSingleTurn(int CardRotation)
 {
-	// first, we deal with the live player, which is always the first one
-	 // PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
-
+	
 	// then let the AI pick the cards
-	for (int PlayerIndex = 0; PlayerIndex < (int)Players.size(); PlayerIndex++)
+	for (int Index = 0; Index < (int)Players.size(); Index++)
 	{
-		PresentCardstoAI(Players[PlayerIndex], PlayersHands[PlayerIndex]);
+		// check if the player is a real one. being real is hard.
+		if (std::find(RealPlayersIndexes.begin(), RealPlayersIndexes.end(), Index) != RealPlayersIndexes.end())
+		{ 
+			PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
+		}
+		
+		else PresentCardstoAI(Players[Index], PlayersHands[Index]);
 	}
 
 	// then buy and play the cards at the same time
