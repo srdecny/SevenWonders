@@ -33,8 +33,9 @@ public:
 };
 
 class SingleResourceBuilding : public BaseCard
-{
+{ 
 public:
+	// MUST assign the Type in children class constructor (Common/Rare resource)
 	Resources ProducedResource;
 	int Amount;
 	void CardEffect(Player& player) override;
@@ -74,7 +75,6 @@ public:
 class ScienceBuilding : public BaseCard
 {
 public:
-	CardTypes Type = Science;
 	ScienceSymbols Symbol;
 	void CardEffect(Player& player) override;
 	ScienceBuilding() { Type = Science; };
@@ -85,7 +85,6 @@ public:
 class MerchantBuilding : public BaseCard
 {
 public:
-	CardTypes Type = Merchant;
 	virtual void CardEffect(Player& player) override { return; };
 	MerchantBuilding() { Type = Merchant; };
 
@@ -98,7 +97,6 @@ public:
 	int ScorePoints(Player& player) override;
 	std::string CardInfo() override { return "Not implemented!"; };
 	int Points = 0;
-	CardTypes Type = Wonder;
 	WonderBuilding() { Type = Wonder; };
 };
 

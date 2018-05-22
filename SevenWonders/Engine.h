@@ -31,7 +31,6 @@ public:
 
 	void PrintPlayerStats(std::ostream& stream, Player& player);
 
-	bool PlayerCanAffordCard(Player& player, std::shared_ptr<BaseCard> card);
 
 private:
 	// find the cheapest way a player can buy a card

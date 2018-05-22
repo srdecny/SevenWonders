@@ -7,12 +7,12 @@ BaseWonder::BaseWonder()
 }
 BaseWonder::~BaseWonder()
 {
-    return;
+    
 }
 
 void BaseWonder::GetNextWonderBuilding()
 {
-	if (CurrentLevel >= (int)WonderBuildings.capacity()) CurrentBuilding = nullptr;
+	if (CurrentLevel >= (int)WonderBuildings.capacity() - 1) CurrentBuilding = nullptr;
 	else
 	{
 		CurrentLevel++;

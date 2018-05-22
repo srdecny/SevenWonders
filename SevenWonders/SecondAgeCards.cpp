@@ -7,6 +7,7 @@
 
 ClayFactory::ClayFactory()
 {
+	Type = CommonResource;
 	ProducedResource = Clay;
 	Amount = 2;
 	GoldCost = 1;
@@ -15,6 +16,7 @@ ClayFactory::ClayFactory()
 
 StoneFactory::StoneFactory()
 {
+	Type = CommonResource;
 	ProducedResource = Stone;
 	Amount = 2;
 	GoldCost = 1;
@@ -23,6 +25,7 @@ StoneFactory::StoneFactory()
 
 IronFactory::IronFactory()
 {
+	Type = CommonResource;
 	ProducedResource = Iron;
 	Amount = 2;
 	GoldCost = 1;
@@ -31,6 +34,7 @@ IronFactory::IronFactory()
 
 WoodFactory::WoodFactory()
 {
+	Type = CommonResource;
 	ProducedResource = Wood;
 	Amount = 2;
 	GoldCost = 1;

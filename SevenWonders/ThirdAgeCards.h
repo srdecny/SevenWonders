@@ -97,6 +97,7 @@ class ResearchersGuild : public GuildBuilding
 {
 public:
 	ResearchersGuild();
+	int ScorePoints(Player& player) override { return 0; };
 	void CardEffect(Player& player) override;
 	std::string CardInfo() override;
 };

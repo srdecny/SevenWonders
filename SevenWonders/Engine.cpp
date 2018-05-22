@@ -22,7 +22,6 @@ void GameEngine::InitializeTheGame()
 	for (int i = 0; i < PlayerCount; i++)
 	{
 		Players.push_back(Player());
-		Players[i].Gold = 3; 
 	}
 
     // assign neighbours
@@ -47,9 +46,6 @@ void GameEngine::InitializeTheGame()
 
 		PlayersHands.push_back(std::vector<std::shared_ptr<BaseCard>>());
 	}
-
-
-	
 }
 
 void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>>& cards)
@@ -129,7 +125,8 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	
 	}
 
-
+	stream << std::endl;
+	PrintPlayerStats(std::cout, player);
 	// REPL loop
 	while (true)
 	{
@@ -171,7 +168,6 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 				if (CardIndex >= 0 && CardIndex < (int)cards.size()) // can discard unaffordable cards
 				{
 					ProcessCardPurchase(player.Wonder->CurrentBuilding, cards[CardIndex], player, cards);
-					player.Wonder->GetNextWonderBuilding();
 					break;
 				}
 			}
@@ -232,11 +228,6 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	}
 
 	stream << std::endl;	
-}
-
-bool GameEngine::PlayerCanAffordCard(Player &player, std::shared_ptr<BaseCard> card)
-{
-	throw std::invalid_argument("NOT IMPLEMENTED");
 }
 
 std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shared_ptr<BaseCard> card)
@@ -386,10 +377,10 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 void GameEngine::ProcessSingleTurn(int CardRotation)
 {
 	// first, we deal with the live player, which is always the first one
-	// PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
+	 // PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
 
 	// then let the AI pick the cards
-	for (int PlayerIndex = 0; PlayerIndex < (int)Players.capacity(); PlayerIndex++)
+	for (int PlayerIndex = 0; PlayerIndex < (int)Players.size(); PlayerIndex++)
 	{
 		PresentCardstoAI(Players[PlayerIndex], PlayersHands[PlayerIndex]);
 	}
@@ -418,7 +409,47 @@ void GameEngine::ProcessSingleTurn(int CardRotation)
 
 void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
-	ProcessCardPurchase(cards[0], cards[0], player, cards); // always plays the first card
+	std::vector<std::shared_ptr<BaseCard>> PlayableCards;
+	for (auto& card : cards)
+	{
+		auto CardCost = DetermineLowestBuyingCost(player, card);
+		if (CardCost[0] <= player.Gold || card->CanPlayerAffordThisForFree(player))
+		{
+			PlayableCards.push_back(card);
+		}
+	}
+
+	
+	if (player.Wonder->CurrentBuilding != nullptr)
+	{
+		if (DetermineLowestBuyingCost(player, player.Wonder->CurrentBuilding)[0] <= player.Gold || player.Wonder->CurrentBuilding->CanPlayerAffordThisForFree(player))
+		{
+			PlayableCards.push_back(player.Wonder->CurrentBuilding);
+		}
+	}
+	
+	std::srand(std::time(0));
+	std::random_shuffle(PlayableCards.begin(), PlayableCards.end());
+
+	
+
+
+	if (PlayableCards.size() > 0)
+	{
+		if (PlayableCards.front()->Type != Wonder)
+		{
+			ProcessCardPurchase(PlayableCards.front(), PlayableCards.front(), player, cards);
+		}
+		else
+		{
+			ProcessCardPurchase(PlayableCards.front(), cards.front(), player, cards);
+		}
+	}
+	else
+	{
+		auto discard = std::make_shared<DiscardedCard>();
+		ProcessCardPurchase(discard, cards.front(), player, cards);
+	}
 }
 
 void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, Player& player)
@@ -430,6 +461,7 @@ void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, P
 
 void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::shared_ptr<BaseCard>CardToDiscard, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand)
 {
+
 
 	if (CardToPlay->CanPlayerAffordThisForFree(player))
 	{
@@ -447,6 +479,12 @@ void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::
 
 	auto IndexToRemove = std::find(hand.begin(), hand.end(), CardToDiscard);
 	hand.erase(IndexToRemove);
+
+
+	if (CardToPlay->Type == Wonder)
+	{
+		player.Wonder->GetNextWonderBuilding();
+	}
 
 }
 

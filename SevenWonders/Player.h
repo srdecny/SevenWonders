@@ -12,7 +12,7 @@ public:
 	Player();
 	~Player();
 
-	std::vector<ResourceVector> TradableResources; // todo TradableResources
+	std::vector<ResourceVector> TradableResources;
 	std::vector<ScienceVector> ScienceVectors;
     
     // shared_ptr because one card can appear multiple times in games with higher player count
@@ -21,7 +21,7 @@ public:
 	void ModifyTradableResources(Resources resource, int change);
 	void ModifyScienceVectors(ScienceSymbols symbol, int change);
 
-	int Gold;
+	int Gold = 3;
 	int CommonResourceCostLeft = 2;
 	int CommonResourceCostRight = 2;
 	int RareResourceCost = 2;
@@ -31,10 +31,10 @@ public:
 
 	int MilitaryPoints = 0;
 
-	BaseWonder* Wonder;
+	BaseWonder* Wonder = nullptr;
 
-	Player* LeftNeighbour;
-	Player* RightNeighbour;
+	Player* LeftNeighbour = nullptr;
+	Player* RightNeighbour = nullptr;
 
 };
 
