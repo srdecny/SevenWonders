@@ -12,42 +12,46 @@ class GameEngine
 {
 public:
 	GameEngine(int PlayerCount, int RealPlayers);
-	~GameEngine();
-
 	void PlayTheGame();
 
-	int PlayerCount;
-	int RealPlayers;
+private:
+
+	// generates the players and their wonders
+	void InitializeTheGame();
+
+	int PlayerCount; // number of players in the game
+	int RealPlayers; // number of human players
 	std::vector<Player> Players;
 	std::vector<std::vector<std::shared_ptr<BaseCard>>> PlayersHands;
 	std::vector<int> RealPlayersIndexes;
+	BaseWonder* GenerateWonder(int WonderIndex); // used by InitializeTheGame()
 
-	void InitializeTheGame();
-	int ScorePlayerPoints(Player& player);
-
-	// CardRotation  1 -> clockwise, 0 -> counterclockwise
+	// CardRotation 1/0 - rotates the hands clockwise/counterclockwise
+	// Presents the cards to players and process purchases
 	void ProcessSingleTurn(int CardRotation);
 
-	void PresentCardsToPlayer(std::ostream& stream, Player& player, std::vector<std::shared_ptr<BaseCard>>& cards);
-	void PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards);
-
-	void PrintPlayerStats(std::ostream& stream, Player& player);
-
-
-private:
-	// find the cheapest way a player can buy a card
+	// [0] - total cost (including the GoldCost of the card), [1] - paid to left neighbour, [2] - paid to right neighbour
 	std::vector<int> DetermineLowestBuyingCost(Player& player, std::shared_ptr<BaseCard> card);
-	BaseWonder* GenerateWonder(int WonderIndex);
-	int ScoreSciencePoints(Player& player);
 
+	// contains REPL loop for player input
+	void PresentCardsToPlayer(std::ostream& stream, Player& player, std::vector<std::shared_ptr<BaseCard>>& cards);
+	// currently plays a random card if possible; discarding a card if not.
+	void PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards);
+	// distributes PointsForWin, comparing the Military power of players
+	void CalculateMilitaryFights(int PointsForWin);
 
-	// this should be in process turn method
+	// Gold transaction for purchasing resources and playing the cards is done simultaneously
+	// these auxiliary vectors and functions are invoked after every turn
 	std::vector<std::pair<std::vector<int>, Player*>> GoldTransactions;
 	std::vector<std::pair<std::shared_ptr<BaseCard>, Player*>> PlayedCardsQueue;
 	void DistributeGoldToNeighbours(std::vector<int> gold, Player& player);
 
-	// adds card and gold transaction to queue and updates the hand
+	// hand MUST contain CardToDiscard. CardToPlay's card effect is invoked and the card is added to player's hand.
 	void ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::shared_ptr<BaseCard> CardToDiscard, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand);
+
+	// auxiliary functions for displaying and computing player's scores.
 	void DisplayPlayersPoints(std::ostream& stream, int PlayerIndex);
-	void CalculateMilitaryFights(int PointsForWin);
+	void PrintPlayerStats(std::ostream& stream, Player& player);
+	int ScorePlayerPoints(Player& player);
+	int ScoreSciencePoints(Player& player);
 };

@@ -12,10 +12,6 @@ GameEngine::GameEngine(int count, int real)
 	RealPlayers = real;
 }
 
-GameEngine::~GameEngine()
-{
-}
-
 void GameEngine::InitializeTheGame()
 {
 	if (PlayerCount <= 2 || PlayerCount > 7) throw std::invalid_argument("Invalid player count!");
@@ -28,7 +24,6 @@ void GameEngine::InitializeTheGame()
 		Players.push_back(Player());
 		PlayerIndexes.push_back(i);
 	}
-
 
 	// randomly determine the positions of real players
 	std::srand(std::time(0));
@@ -58,7 +53,7 @@ void GameEngine::InitializeTheGame()
 	for (int l = 0; l < PlayerCount; l++)
 	{
 		Players[l].Wonder = GenerateWonder(WondersToDistribute[l]);
-		Players[l].Wonder->InitialResource(Players[l]); // give the starting resource
+		Players[l].Wonder->InitialResource(Players[l]); // give the starting resource of the wonder to the player
 
 		PlayersHands.push_back(std::vector<std::shared_ptr<BaseCard>>());
 	}
@@ -67,8 +62,8 @@ void GameEngine::InitializeTheGame()
 void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
 	std::map<std::shared_ptr<BaseCard>, std::vector<int>> CardPriceMap;
-	std::vector<int> PlayableCardIndexes;
-	std::vector<int> UnplayableCardIndexes;
+	std::vector<int> PlayableCardIndexes; // will contain the card indexes player CAN afford
+	std::vector<int> UnplayableCardIndexes; // will contain the card indexes player CAN NOT afford
 	bool CanAffordWonder = false;
 
 	int index = 0;
@@ -76,8 +71,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	{
 		auto cost = DetermineLowestBuyingCost(player, card); 
 
-		if (card->CanPlayerAffordThisForFree(player)) PlayableCardIndexes.push_back(index);
-		else if (cost[0] <= player.Gold) PlayableCardIndexes.push_back(index);
+		if (cost[0] <= player.Gold) PlayableCardIndexes.push_back(index);
 		else UnplayableCardIndexes.push_back(index);
 
 		CardPriceMap.insert(std::make_pair(card, cost));
@@ -85,21 +79,13 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 
 	}
 
+	// print affordable cards
 	for (int PlayableIndex : PlayableCardIndexes)
 	{
 		auto Playable = cards[PlayableIndex];
-		if (Playable->CanPlayerAffordThisForFree(player))
+		if (CardPriceMap[Playable][0] == 0) // doesnt' have to spend anything
 		{
-			if (Playable->GoldCost == 0)
-			{
-				stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName() << " for free." << std::endl;
-			}
-			else
-			{
-				stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName();
-				stream << " for a cost of: " << std::to_string(Playable->GoldCost);
-				stream << std::endl;
-			}
+			stream << "(Index " << std::to_string(PlayableIndex) << ") -- You can afford " << Playable->CardName() << " for free." << std::endl;
 		}
 		else
 		{
@@ -109,13 +95,14 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		}
 	}
 
+	// print unaffordable cards
 	for (int UnplayableIndex : UnplayableCardIndexes)
 	{
 		auto Unplayable = cards[UnplayableIndex];
 		stream << "(Index " << std::to_string(UnplayableIndex) << ") -- You can not afford " << Unplayable->CardName() << "." << std::endl;
 	}
 
-	// get wonder if avaliable
+	// determine if wonder can be played
 	auto WonderBuilding = player.Wonder->CurrentBuilding;
 	if (WonderBuilding == nullptr)
 	{
@@ -146,7 +133,7 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 	// REPL loop
 	while (true)
 	{
-		stream << "Avaliable commands: play X; discard X; wonder X; info X/wonder; stats left/right/me; exit. X is index of the card." << std::endl;
+		stream << "Avaliable commands: play X; discard X; wonder X; info X/wonder; stats left/right/me; exit. X is the index of the card." << std::endl;
 		std::string command;
 		std::getline(std::cin, command);
 		stream << std::endl;
@@ -249,11 +236,13 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shared_ptr<BaseCard> card)
 {
 	// most of the time players will have only one or two resource vectors, so performance should be OK
-	// the rough cap of different resource vectors in base game is 16 (caravanserai + appropriate wonder)
+	// the rough cap of different resource vectors in base game is 16 + C (caravanserai + appropriate wonder)
 
 	int MinimumCost = 1000; // the real cost won't ever be bigger, so it's safe
 	int GoldPaidToLeft = 0;
 	int GoldPaidToRight = 0;
+
+	if (card->CanPlayerAffordThisForFree(player)) return { 0,0,0 };
 
 	for (ResourceVector &PlayerResource : player.TradableResources)
 	{
@@ -303,7 +292,10 @@ std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shar
 
 					int TotalCost = PaidToLeftThisPair + PaidToRightThisPair + card->GoldCost;
 
-					if (MinimumCost > TotalCost && TotalCost > 0)
+					// if the total cost would be 0, then it would pass the CanAffordForFree test
+					// so this purchase combination actually doesn't buy anything
+
+					if (MinimumCost > TotalCost && TotalCost > 0) 
 					{
 						MinimumCost = TotalCost;
 						GoldPaidToLeft = PaidToLeftThisPair;
@@ -315,7 +307,7 @@ std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shar
 		}
 	
 	}
-	return std::vector<int>{ MinimumCost, GoldPaidToLeft, GoldPaidToRight};
+	return { MinimumCost, GoldPaidToLeft, GoldPaidToRight};
 }
 
 int GameEngine::ScorePlayerPoints(Player &player)
@@ -336,13 +328,14 @@ int GameEngine::ScoreSciencePoints(Player &player)
 {
 	int ScoredPoints = 0;
 
+	// find the symbol combination that gives most points
 	for (ScienceVector &vector : player.ScienceVectors)
 	{
 		int VectorScore = 0;
-		VectorScore += *std::min_element(vector.ScienceArray.begin(), vector.ScienceArray.end()) * 7;
+		VectorScore += *std::min_element(vector.ScienceArray.begin(), vector.ScienceArray.end()) * 7; // 7 points for every set of symbols
 		for (int i = 0; i <= 2; i++)
 		{
-			VectorScore += vector.ScienceArray[i] * vector.ScienceArray[i];
+			VectorScore += vector.ScienceArray[i] * vector.ScienceArray[i]; // N^2 points, where N is the number of a single symbol
 		}
 
 		if (VectorScore > ScoredPoints) ScoredPoints = VectorScore;
@@ -392,7 +385,6 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 
 void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 {
-
 	stream << "Avaliable Gold: " << std::to_string(player.Gold) << "; Military Points: " << std::to_string(player.MilitaryPoints) << "; Wonder: " << player.Wonder->WonderName << std::endl;
 	for (ResourceVector& vector : player.TradableResources)
 	{
@@ -418,19 +410,19 @@ void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 void GameEngine::ProcessSingleTurn(int CardRotation)
 {
 	
-	// then let the AI pick the cards
+	// let every player pick a card.
 	for (int Index = 0; Index < (int)Players.size(); Index++)
 	{
 		// check if the player is a real one. being real is hard.
 		if (std::find(RealPlayersIndexes.begin(), RealPlayersIndexes.end(), Index) != RealPlayersIndexes.end())
 		{ 
-			PresentCardsToPlayer(std::cout, Players[0], PlayersHands[0]);
+			PresentCardsToPlayer(std::cout, Players[Index], PlayersHands[Index]);
 		}
 		
 		else PresentCardstoAI(Players[Index], PlayersHands[Index]);
 	}
 
-	// then buy and play the cards at the same time
+	// then buy and play the cards at the same time and process gold transactions
 	for (auto& transaction : GoldTransactions)
 	{
 		DistributeGoldToNeighbours(transaction.first, *transaction.second);
@@ -446,10 +438,6 @@ void GameEngine::ProcessSingleTurn(int CardRotation)
 
 	GoldTransactions.clear();
 	PlayedCardsQueue.clear();
-
-	//PrintPlayerStats(std::cout, Players[0]);
-
-
 }
 
 void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards)
@@ -523,6 +511,7 @@ void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::
 	PlayedCardsQueue.push_back(std::make_pair(CardToPlay, &player));
 
 	auto IndexToRemove = std::find(hand.begin(), hand.end(), CardToDiscard);
+	if (IndexToRemove == hand.end()) throw new std::exception("Discarded card is not in player's hand!");
 	hand.erase(IndexToRemove);
 
 

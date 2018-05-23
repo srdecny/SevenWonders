@@ -18,7 +18,7 @@ BaseCard::~BaseCard()
 
 bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 {
-	if (player.Gold < GoldCost) return false;
+	if (GoldCost > 0) return false;
 
 	for (ResourceVector &vector : player.TradableResources)
 	{

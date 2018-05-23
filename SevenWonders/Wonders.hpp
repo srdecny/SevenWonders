@@ -17,7 +17,7 @@ public:
     void InitialResource(Player& player);
 	int CurrentLevel = 0;
     std::vector<std::shared_ptr<BaseCard>> WonderBuildings;
-	std::shared_ptr<BaseCard> CurrentBuilding;
+	std::shared_ptr<BaseCard> CurrentBuilding; // THIS CAN BE A NULLPTR!
 	std::string WonderName;
 	void GetNextWonderBuilding();
 
