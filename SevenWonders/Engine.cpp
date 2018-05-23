@@ -39,8 +39,8 @@ void GameEngine::InitializeTheGame()
 	for (int j = 0; j < PlayerCount; j++)
 	{
 		// because c++ doesnt have proper modulo we have to use this weird formula instead
-		Players[j].LeftNeighbour = &Players[((j - 1) % PlayerCount + PlayerCount) % PlayerCount];
-		Players[j].RightNeighbour = &Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount];
+		Players[j].LeftNeighbour = std::make_shared<Player>(Players[((j - 1) % PlayerCount + PlayerCount) % PlayerCount]);
+		Players[j].RightNeighbour = std::make_shared<Player>(Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount]);
 	}
 
 	
@@ -52,7 +52,7 @@ void GameEngine::InitializeTheGame()
 
 	for (int l = 0; l < PlayerCount; l++)
 	{
-		Players[l].Wonder = GenerateWonder(WondersToDistribute[l]);
+		Players[l].Wonder = std::move(GenerateWonder(WondersToDistribute[l]));
 		Players[l].Wonder->InitialResource(Players[l]); // give the starting resource of the wonder to the player
 
 		PlayersHands.push_back(std::vector<std::shared_ptr<BaseCard>>());
@@ -344,36 +344,36 @@ int GameEngine::ScoreSciencePoints(Player &player)
 	return ScoredPoints;
 }
 
-BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
+std::shared_ptr<BaseWonder> GameEngine::GenerateWonder(int WonderIndex)
 {
 	switch (WonderIndex)
 	{
 	case 1:
-		return new Gizah();
+		return std::make_shared<Gizah>();
 		break;
 
 	case 2:
-		return new Rhodos();
+		return std::make_shared<Rhodos>();
 		break;
 
 	case 3:
-		return new Alexandria();
+		return std::make_shared<Alexandria>();
 		break;
 
 	case 4:
-		return new Halikarnassos();
+		return std::make_shared<Babylon>();
 		break;
 
 	case 5:
-		return new Olympia();
+		return std::make_shared<Halikarnassos>();
 		break;
 
 	case 6:
-		return new Ephesus();
+		return std::make_shared<Ephesus>();
 		break;
 
 	case 7:
-		return new Babylon();
+		return std::make_shared<Olympia>();
 		break;
 
 	default:
@@ -443,19 +443,21 @@ void GameEngine::ProcessSingleTurn(int CardRotation)
 void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<BaseCard>>& cards)
 {
 	std::vector<std::shared_ptr<BaseCard>> PlayableCards;
+
+	// check what cards can be played
 	for (auto& card : cards)
 	{
 		auto CardCost = DetermineLowestBuyingCost(player, card);
-		if (CardCost[0] <= player.Gold || card->CanPlayerAffordThisForFree(player))
+		if (CardCost[0] <= player.Gold)
 		{
 			PlayableCards.push_back(card);
 		}
 	}
-
 	
+	// check if wonder can be played
 	if (player.Wonder->CurrentBuilding != nullptr)
 	{
-		if (DetermineLowestBuyingCost(player, player.Wonder->CurrentBuilding)[0] <= player.Gold || player.Wonder->CurrentBuilding->CanPlayerAffordThisForFree(player))
+		if (DetermineLowestBuyingCost(player, player.Wonder->CurrentBuilding)[0] <= player.Gold)
 		{
 			PlayableCards.push_back(player.Wonder->CurrentBuilding);
 		}
@@ -464,9 +466,7 @@ void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<Ba
 	std::srand(std::time(0));
 	std::random_shuffle(PlayableCards.begin(), PlayableCards.end());
 
-	
-
-
+	// play the first card
 	if (PlayableCards.size() > 0)
 	{
 		if (PlayableCards.front()->Type != Wonder)
@@ -478,7 +478,7 @@ void GameEngine::PresentCardstoAI(Player& player, std::vector<std::shared_ptr<Ba
 			ProcessCardPurchase(PlayableCards.front(), cards.front(), player, cards);
 		}
 	}
-	else
+	else // can't play anything, so discarding
 	{
 		auto discard = std::make_shared<DiscardedCard>();
 		ProcessCardPurchase(discard, cards.front(), player, cards);
@@ -495,19 +495,8 @@ void GameEngine::DistributeGoldToNeighbours(std::vector<int> GoldToDistribute, P
 void GameEngine::ProcessCardPurchase(std::shared_ptr<BaseCard> CardToPlay, std::shared_ptr<BaseCard>CardToDiscard, Player& player, std::vector<std::shared_ptr<BaseCard>>& hand)
 {
 
-
-	if (CardToPlay->CanPlayerAffordThisForFree(player))
-	{
-		/*
-		auto EmptyTransaction = std::vector<int>() = { 0,0,0 };
-		GoldTransactions.push_back(std::make_pair(EmptyTransaction, &player));
-		*/
-	}
-	else
-	{
-		GoldTransactions.push_back(std::make_pair(DetermineLowestBuyingCost(player, CardToPlay), &player));
-	}
-
+	GoldTransactions.push_back(std::make_pair(DetermineLowestBuyingCost(player, CardToPlay), &player));
+	
 	PlayedCardsQueue.push_back(std::make_pair(CardToPlay, &player));
 
 	auto IndexToRemove = std::find(hand.begin(), hand.end(), CardToDiscard);

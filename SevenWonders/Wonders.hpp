@@ -13,7 +13,7 @@ class BaseWonder
 {
 public:
     BaseWonder();
-    ~BaseWonder();
+	~BaseWonder();
     void InitialResource(Player& player);
 	int CurrentLevel = 0;
     std::vector<std::shared_ptr<BaseCard>> WonderBuildings;

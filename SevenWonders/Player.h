@@ -10,7 +10,6 @@ class Player
 {
 public:
 	Player();
-	~Player();
 
 	std::vector<ResourceVector> TradableResources;
 	std::vector<ScienceVector> ScienceVectors;
@@ -18,6 +17,8 @@ public:
     // shared_ptr because one card can appear multiple times in games with higher player count
     // and we want to have only one instance of each card class for lower memory usage
     std::vector<std::shared_ptr<BaseCard>> PlayedCards;
+
+
 	void ModifyTradableResources(Resources resource, int change);
 	void ModifyScienceVectors(ScienceSymbols symbol, int change);
 
@@ -31,10 +32,12 @@ public:
 
 	int MilitaryPoints = 0;
 
-	BaseWonder* Wonder = nullptr;
+	// this could be unique_ptr, but I failed at making it work
+	// there was trouble when pushing new Player instance into a vector
+	std::shared_ptr<BaseWonder> Wonder;
 
-	Player* LeftNeighbour = nullptr;
-	Player* RightNeighbour = nullptr;
+	std::shared_ptr<Player> LeftNeighbour;
+	std::shared_ptr<Player> RightNeighbour;
 
 };
 

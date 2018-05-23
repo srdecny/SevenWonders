@@ -9,16 +9,19 @@ using namespace std;
 int main()
 {
 	
-	/*
+	
 	for (int i = 0; i < 1000; i++)
 	{
 		GameEngine engine(3, 0);
 		engine.PlayTheGame();
 	}
-	*/
+	
+	
 
-	GameEngine engine(3, 3);
+	/*
+	GameEngine engine(3, 1);
 	engine.PlayTheGame();
+	*/
 
 	cout << "Finished!";
 	getchar();

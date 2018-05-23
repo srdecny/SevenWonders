@@ -12,11 +12,6 @@ Player::Player()
 }
 
 
-Player::~Player()
-{
-	
-}
-
 void Player::ModifyTradableResources(Resources resource, int change)
 {
 	for (ResourceVector &v : TradableResources)

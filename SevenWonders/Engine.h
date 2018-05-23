@@ -24,7 +24,7 @@ private:
 	std::vector<Player> Players;
 	std::vector<std::vector<std::shared_ptr<BaseCard>>> PlayersHands;
 	std::vector<int> RealPlayersIndexes;
-	BaseWonder* GenerateWonder(int WonderIndex); // used by InitializeTheGame()
+	std::shared_ptr<BaseWonder> GenerateWonder(int WonderIndex); // used by InitializeTheGame()
 
 	// CardRotation 1/0 - rotates the hands clockwise/counterclockwise
 	// Presents the cards to players and process purchases
