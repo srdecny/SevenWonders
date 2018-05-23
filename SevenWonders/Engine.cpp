@@ -50,7 +50,7 @@ void GameEngine::InitializeTheGame()
 
 	
 	// randomly assign wonders to players
-	std::vector<int> WondersToDistribute = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	std::vector<int> WondersToDistribute = {  1, 2, 3, 4, 5, 6, 7 };
 
 	std::srand(std::time(0)); // get random seed, or the shuffle will be the same every time
 	std::random_shuffle(WondersToDistribute.begin(), WondersToDistribute.end());
@@ -363,10 +363,29 @@ BaseWonder* GameEngine::GenerateWonder(int WonderIndex)
 		return new Rhodos();
 		break;
 
-	default:
-		return new Rhodos();
+	case 3:
+		return new Alexandria();
 		break;
-		//throw std::exception("Wonder not implemented!");
+
+	case 4:
+		return new Halikarnassos();
+		break;
+
+	case 5:
+		return new Olympia();
+		break;
+
+	case 6:
+		return new Ephesus();
+		break;
+
+	case 7:
+		return new Babylon();
+		break;
+
+	default:
+		
+		throw std::exception("Index out of range!");
 	}
 
 }

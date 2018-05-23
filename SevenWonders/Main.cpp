@@ -9,9 +9,13 @@ using namespace std;
 int main()
 {
 	
-	GameEngine engine(3, 0);
-	engine.PlayTheGame();
+	for (int i = 0; i < 1000; i++)
+	{
+		GameEngine engine(3, 0);
+		engine.PlayTheGame();
+	}
 
+	cout << "Finished!";
 	getchar();
 }
 

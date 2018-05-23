@@ -14,26 +14,25 @@ class BaseWonder
 public:
     BaseWonder();
     ~BaseWonder();
-    virtual void InitialResource(Player& player) = 0;
+    void InitialResource(Player& player);
 	int CurrentLevel = 0;
     std::vector<std::shared_ptr<BaseCard>> WonderBuildings;
 	std::shared_ptr<BaseCard> CurrentBuilding;
 	std::string WonderName;
-
 	void GetNextWonderBuilding();
+
+	Resources StartingResource;
 };
 
 class Gizah : public BaseWonder
 {
 public:
-    void InitialResource(Player& player);
     Gizah();
 };
 
 class Rhodos : public BaseWonder
 {
 public:
-	void InitialResource(Player& player);
 	Rhodos();
 };
 
@@ -62,6 +61,78 @@ class RhodosSecondStage : public WonderBuilding
 {
 public:
 	RhodosSecondStage();
+	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
+};
+
+class Alexandria : public BaseWonder
+{
+public:
+	Alexandria();
+};
+
+class AlexandriaSecondStage : public WonderBuilding
+{
+public:
+	AlexandriaSecondStage();
+	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
+};
+
+class Babylon : public BaseWonder
+{
+public:
+	Babylon();
+};
+
+class BabylonSecondStage : public WonderBuilding
+{
+public:
+	BabylonSecondStage();
+	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
+
+};
+
+class Ephesus : public BaseWonder
+{
+public:
+	Ephesus();
+};
+
+class EphesusSecondStage : public WonderBuilding
+{
+public:
+	EphesusSecondStage();
+	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
+};
+
+
+class Olympia : public BaseWonder
+{
+public:
+	Olympia();
+};
+
+class OlympiaSecondStage : public WonderBuilding
+{
+public:
+	OlympiaSecondStage();
+	void CardEffect(Player& player) override;
+	std::string CardInfo() override;
+};
+
+class Halikarnassos : public BaseWonder
+{
+public:
+	Halikarnassos();
+};
+
+class HalikarnassosSecondStage : public WonderBuilding
+{
+public:
+	HalikarnassosSecondStage();
 	void CardEffect(Player& player) override;
 	std::string CardInfo() override;
 };
