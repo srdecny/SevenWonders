@@ -4,13 +4,7 @@
 #include "ThirdAgeCards.h"
 #include "Player.h"
 
-BaseWonder::BaseWonder()
-{
-}
-BaseWonder::~BaseWonder()
-{
-    
-}
+
 
 void BaseWonder::InitialResource(Player& player)
 {

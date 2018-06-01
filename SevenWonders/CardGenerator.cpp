@@ -102,8 +102,10 @@
 	 std::srand(std::time(0));
 	 std::random_shuffle(GuildPool.begin(), GuildPool.end());
 
+
 	 std::vector<std::shared_ptr<BaseCard>> CardPool;
 
+	 // amount of guilds per game = number of player + 2
 	 for (int i = 0; i < Players + 2; i++)
 	 {
 		 CardPool.push_back(GuildPool.back());

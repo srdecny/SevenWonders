@@ -41,6 +41,7 @@ void GameEngine::InitializeTheGame()
 		// because c++ doesnt have proper modulo we have to use this weird formula instead
 		Players[j].LeftNeighbour = std::make_shared<Player>(Players[((j - 1) % PlayerCount + PlayerCount) % PlayerCount]);
 		Players[j].RightNeighbour = std::make_shared<Player>(Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount]);
+		Players[j].PlayerIndex = j;
 	}
 
 	
@@ -143,7 +144,11 @@ void GameEngine::PresentCardsToPlayer(std::ostream &stream, Player &player, std:
 		if (command.substr(0, 4) == "play" && command.length() == 6) // because the index will alway be a single digit
 		{
 			int CardIndex = command[5] - '0'; // convert the index to int
-			if (std::find(PlayableCardIndexes.begin(), PlayableCardIndexes.end(), CardIndex) != PlayableCardIndexes.end())
+			if (std::find(player.PlayedCards.begin(), player.PlayedCards.end(), cards[CardIndex]) != player.PlayedCards.end())
+			{
+				stream << "Already played this card!";
+			}
+			else if (std::find(PlayableCardIndexes.begin(), PlayableCardIndexes.end(), CardIndex) != PlayableCardIndexes.end())
 			{
 				ProcessCardPurchase(cards[CardIndex], cards[CardIndex], player, cards);
 				return;
@@ -244,14 +249,14 @@ std::vector<int> GameEngine::DetermineLowestBuyingCost(Player &player, std::shar
 
 	if (card->CanPlayerAffordThisForFree(player)) return { 0,0,0 };
 
-	for (ResourceVector &PlayerResource : player.TradableResources)
+	for (ResourceVector &PlayerResource : player.AvaliableResources)
 	{
 		ResourceVector ResourcesToBuy = card->CardCost - PlayerResource;
 
 		// we need to loop over all possible combinations of neighbour's resources
-		for (ResourceVector &LeftNeighbourResource : player.LeftNeighbour->TradableResources)
+		for (ResourceVector &LeftNeighbourResource : player.LeftNeighbour->AvaliableResources)
 		{
-			for (ResourceVector &RightNeighbourResource : player.RightNeighbour->TradableResources)
+			for (ResourceVector &RightNeighbourResource : player.RightNeighbour->AvaliableResources)
 			{
 				//int CostOfThisPair = 0; // how much will this pair cost us
 				int PaidToLeftThisPair = 0;
@@ -385,8 +390,9 @@ std::shared_ptr<BaseWonder> GameEngine::GenerateWonder(int WonderIndex)
 
 void GameEngine::PrintPlayerStats(std::ostream& stream, Player& player)
 {
+	stream << "Player index: " << std::to_string(player.PlayerIndex) << std::endl;
 	stream << "Avaliable Gold: " << std::to_string(player.Gold) << "; Military Points: " << std::to_string(player.MilitaryPoints) << "; Wonder: " << player.Wonder->WonderName << std::endl;
-	for (ResourceVector& vector : player.TradableResources)
+	for (ResourceVector& vector : player.AvaliableResources)
 	{
 		stream << "Avaliable resources: " << vector.PrintResourceVector() << std::endl;
 	}
@@ -539,11 +545,13 @@ void GameEngine::PlayTheGame()
 	}
 	CalculateMilitaryFights(5);
 
+	
 	for (int index = 0; index < PlayerCount; index++)
 	{
 		std::cout << "------------------" << std::endl;
 		DisplayPlayersPoints(std::cout, index);
 	}
+	
 }
 
 void GameEngine::CalculateMilitaryFights(int PointsForWin)

@@ -9,21 +9,12 @@ using namespace std;
 int main()
 {
 	
-	
+	// stress test
 	for (int i = 0; i < 1000; i++)
 	{
-		GameEngine engine(3, 0);
+		GameEngine engine(6, 0);
 		engine.PlayTheGame();
 	}
 	
-	
-
-	/*
-	GameEngine engine(3, 1);
-	engine.PlayTheGame();
-	*/
-
-	cout << "Finished!";
-	getchar();
 }
 

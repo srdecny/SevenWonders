@@ -6,21 +6,12 @@
 #include <sstream>
 
 
-BaseCard::BaseCard()
-{
-
-}
-
-BaseCard::~BaseCard()
-{
-	
-}
 
 bool BaseCard::CanPlayerAffordThisForFree(Player& player)
 {
 	if (GoldCost > 0) return false;
 
-	for (ResourceVector &vector : player.TradableResources)
+	for (ResourceVector &vector : player.AvaliableResources)
 	{
 		if (vector >= CardCost) return true;
 	}
@@ -79,7 +70,7 @@ void MultipleResourceBuilding::CardEffect(Player& player)
 	// so only one resource from AvaliableResource is avaliable at a given time
 	std::vector<ResourceVector> NewResources;
 
-	for (ResourceVector OldVector : player.TradableResources)
+	for (ResourceVector OldVector : player.AvaliableResources)
 	{
 		for (Resources Resource : ProducedResources)
 		{
@@ -89,11 +80,11 @@ void MultipleResourceBuilding::CardEffect(Player& player)
 		}
 	}
 
-	player.TradableResources.clear();
+	player.AvaliableResources.clear();
 
 	for (ResourceVector NewVector : NewResources)
 	{
-		player.TradableResources.push_back(NewVector);
+		player.AvaliableResources.push_back(NewVector);
 	}
 }
 

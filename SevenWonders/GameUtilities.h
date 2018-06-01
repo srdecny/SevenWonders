@@ -13,7 +13,7 @@ static std::map<CardTypes, std::string> CardTypesName = { {CommonResource, "Comm
 class ResourceVector
 {
 public:
-	ResourceVector(); // default empty constructor
+	ResourceVector();
 
     // returns true if all Resources in first vector are >= than those in the other
 	bool operator>=(const ResourceVector& other);

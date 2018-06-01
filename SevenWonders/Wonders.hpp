@@ -12,16 +12,14 @@ class Player;
 class BaseWonder
 {
 public:
-    BaseWonder();
-	~BaseWonder();
     void InitialResource(Player& player);
 	int CurrentLevel = 0;
     std::vector<std::shared_ptr<BaseCard>> WonderBuildings;
-	std::shared_ptr<BaseCard> CurrentBuilding; // THIS CAN BE A NULLPTR!
+	std::shared_ptr<BaseCard> CurrentBuilding; // THIS CAN BE A NULLPTR, if all Wonder stages are built!
 	std::string WonderName;
 	void GetNextWonderBuilding();
 
-	Resources StartingResource;
+	Resources StartingResource; // what resource the player will start with
 };
 
 class Gizah : public BaseWonder
