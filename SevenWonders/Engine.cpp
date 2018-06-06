@@ -39,8 +39,8 @@ void GameEngine::InitializeTheGame()
 	for (int j = 0; j < PlayerCount; j++)
 	{
 		// because c++ doesnt have proper modulo we have to use this weird formula instead
-		Players[j].LeftNeighbour = std::make_shared<Player>(Players[((j - 1) % PlayerCount + PlayerCount) % PlayerCount]);
-		Players[j].RightNeighbour = std::make_shared<Player>(Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount]);
+		Players[j].LeftNeighbour = &Players[((j - 1) % PlayerCount + PlayerCount) % PlayerCount];
+		Players[j].RightNeighbour = &Players[((j + 1) % PlayerCount + PlayerCount) % PlayerCount];
 		Players[j].PlayerIndex = j;
 	}
 

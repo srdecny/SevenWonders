@@ -36,8 +36,10 @@ public:
 	// there was trouble when pushing new Player instance into a vector
 	std::shared_ptr<BaseWonder> Wonder;
 
-	std::shared_ptr<Player> LeftNeighbour;
-	std::shared_ptr<Player> RightNeighbour;
+	// using raw pointers, because the Players are owned by the engine
+	// weak_ptr has to be constructed from shared or another weak pointer, so it's unusable, unfortunately
+	Player* LeftNeighbour;
+	Player* RightNeighbour;
 	int PlayerIndex;
 
 };

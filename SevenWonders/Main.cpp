@@ -8,13 +8,33 @@ using namespace std;
 
 int main()
 {
-	
-	// stress test
-	for (int i = 0; i < 1000; i++)
+
+	string inputP, inputH;
+	int players, humans;
+	cout << "Welcome to the 7 Wonders game." << endl;
+	cout << "Enter the total amount of players (between 3 and 7)" << endl;
+	getline(cin, inputP);
+	cout << "Enter the total amount of human players" << endl;
+	getline(cin, inputH);
+
+	try
 	{
-		GameEngine engine(6, 0);
+		players = stoi(inputP);
+		humans = stoi(inputH);
+		GameEngine engine(players, humans);
 		engine.PlayTheGame();
 	}
+	catch (invalid_argument)
+	{
+		cout << "Invalid input!";
+		return -1;
+	}
+
+	getchar();
+	return 0;
+
+
+	
 	
 }
 
